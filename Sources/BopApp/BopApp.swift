@@ -440,7 +440,7 @@ private final class BopMenuBar: NSObject, NSPopoverDelegate {
         guard event == feedbackEvent else { return }
         switch update {
         case .trackCaptured(let track):
-            hud.update(event: event, detail: "Saving to Bop playlist…", track: track)
+            hud.update(event: event, detail: "Saving to playlist…", track: track)
         case .result(let result):
             lastBopDetail = result
             if popover.isShown, showsRecentBops { updateMenu(makeMenuContent()) }
@@ -620,7 +620,7 @@ private struct BopMenuContent: View {
             }
 
             if playlistAvailable {
-                menuRow(.playlist, "Open Bop Playlist", symbol: "music.note.list") { perform(.openBopPlaylist) }
+                menuRow(.playlist, "Open Playlist", symbol: "music.note.list") { perform(.openBopPlaylist) }
             }
             menuRow(.settings, "Settings…", symbol: "slider.horizontal.3", action: { perform(.showSettings) }) {
                 Text("⌘,")
@@ -653,7 +653,7 @@ private struct BopMenuContent: View {
                 if autosaveEnabled {
                     recentNote("No bopped songs yet")
                 } else {
-                    menuRow(.musicSetup, playlistAvailable ? "Set Up Autosave…" : "Create Bop Playlist…") {
+                    menuRow(.musicSetup, playlistAvailable ? "Set Up Autosave…" : "Create Bop! Playlist…") {
                         perform(.showMusicSettings)
                     }
                 }

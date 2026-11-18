@@ -18,7 +18,8 @@ struct SpotifyBoppedTrack: Codable, Equatable {
 
 @MainActor
 final class SpotifyPlayerConnection {
-    private static let playlistName = "Bop"
+    private static let playlistName = "Bop!"
+    private static let managedPlaylistNames: Set<String> = [playlistName, "Bop"]
     private static let playlistDescription = "Songs you bopped to with Bop. [Bop Spotify Player]"
 
     private static var helperURL: URL {
@@ -141,7 +142,7 @@ final class SpotifyPlayerConnection {
         var existing: String?
         while true {
             let page: Page<Playlist> = try await spotifyGet("me/playlists", offset: offset)
-            for candidate in page.items where candidate.name == Self.playlistName
+            for candidate in page.items where Self.managedPlaylistNames.contains(candidate.name)
                 && candidate.owner.id == storedSession?.accountID && Self.isSpotifyID(candidate.id) {
                 let details: Playlist
                 do {
@@ -203,7 +204,7 @@ final class SpotifyPlayerConnection {
 
     private func isManaged(_ playlist: Playlist) -> Bool {
         playlist.owner.id == storedSession?.accountID
-            && playlist.name == Self.playlistName
+            && Self.managedPlaylistNames.contains(playlist.name)
             && playlist.description == Self.playlistDescription
     }
 
@@ -478,8 +479,8 @@ final class SpotifyPlayerConnection {
             case .signIn: "connect to Spotify"
             case .playing: "read Spotify playback"
             case .refreshPlaylistAccess: "refresh Spotify playlist access"
-            case .create: "create the Bop playlist"
-            case .save: "save the track to Bop"
+            case .create: "set up the Bop! playlist"
+            case .save: "save the track to your playlist"
             }
         }
     }
@@ -653,9 +654,9 @@ final class SpotifyPlayerConnection {
             case .authenticationFailed: "Spotify sign-in didn’t finish. Try connecting again."
             case .accountMismatch: "Use the same Spotify account on both approval screens."
             case .rateLimited: "Spotify is receiving too many requests. Try again later."
-            case .playlistUnavailable: "Bop couldn’t verify that it can write to the Bop playlist."
-            case .playlistMissing: "Spotify couldn’t find the Bop playlist."
-            case .playlistVisible: "Spotify didn’t confirm that the Bop playlist is hidden. Check its visibility in Spotify, then try again."
+            case .playlistUnavailable: "Bop couldn’t verify that it can write to your playlist."
+            case .playlistMissing: "Spotify couldn’t find your playlist."
+            case .playlistVisible: "Spotify didn’t confirm that your playlist is hidden. Check its visibility in Spotify, then try again."
             case .commandFailed: "Spotify couldn’t complete the request."
             case .notFound: "Spotify couldn’t find the requested information."
             }

@@ -304,7 +304,7 @@ final class SpotifyIntegration {
                 let result = try await connection.client.save(trackURI: track.uri, playlistID: playlistID)
                 try Task.checkCancellation()
                 guard self.isCurrent(connection.client) else { return }
-                let message = result == .saved ? "Saved to Bop playlist" : "Already in Bop playlist"
+                let message = result == .saved ? "Saved to playlist" : "Already in playlist"
                 self.publishBopResult(message, event: self.writingTrack?.event ?? track.event)
             } catch SpotifyPlayerConnection.Failure.playlistMissing {
                 if !Task.isCancelled, self.isCurrent(connection.client) {
@@ -362,7 +362,7 @@ final class SpotifyIntegration {
         autosave = false
         defaults.removeObject(forKey: Self.autosaveKey)
         cancelPendingSaves()
-        let message = "Spotify couldn’t find the Bop playlist. Create it again to resume saving."
+        let message = "Spotify couldn’t find your playlist. Set it up again to resume saving."
         status = message
         if let event { onBopUpdate?(event, .result(message)) }
     }

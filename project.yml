@@ -17,6 +17,8 @@ targets:
           - Resources
       - path: Sources/BopApp/Resources
         buildPhase: resources
+      - path: LICENSE
+        buildPhase: resources
     postBuildScripts:
       - name: Embed Spotify Player Helper
         script: '/bin/bash "$SRCROOT/Tools/SpotifyPlayer/embed.sh"'

@@ -131,7 +131,7 @@ struct SpotifySettingsView: View {
             Text("playlist \(arrow)")
                 .foregroundStyle(Color(nsColor: .linkColor))
         }
-        .accessibilityLabel("Open Bop playlist in Spotify")
+        .accessibilityLabel("Open playlist in Spotify")
     }
 
     @ViewBuilder private var details: some View {
@@ -153,7 +153,7 @@ struct SpotifySettingsView: View {
             }
         } else {
             BopSettingsRow {
-                BopSettingsLabel("Bop playlist")
+                BopSettingsLabel("Bop! playlist")
             } control: {
                 if spotify.isCreatingPlaylist {
                     HStack(spacing: 8) {
