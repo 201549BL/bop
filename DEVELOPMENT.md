@@ -36,4 +36,10 @@ python3 -m http.server 4300 --bind 127.0.0.1 --directory docs
 
 To preview the download locally, place `Bop-0.1.0-macOS.zip` in `docs/downloads/`. Git ignores the local archive.
 
+Release builds strip the Spotify helper's linker debug symbols and check each architecture for local build paths before signing. After extracting the distribution ZIP, run the same check with both required architectures.
+
+```sh
+bash Tools/SpotifyPlayer/check-build-paths.sh /path/to/Bop.app/Contents/Helpers/spotify_player arm64 x86_64
+```
+
 GitHub Pages serves `main` from `/docs`. Tag the source used to build the signed and notarized app, then attach the distribution ZIP to that GitHub Release. Verify the landing page downloads the versioned release asset and the privacy notice opens.

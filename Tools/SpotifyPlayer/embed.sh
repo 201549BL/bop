@@ -37,6 +37,12 @@ mkdir -p -- "$helper_dir" "$resource_dir"
 /usr/bin/install -m 755 "$stage_dir/spotify_player" "$helper"
 /usr/bin/install -m 644 "$stage_dir/LICENSE" "$license"
 
+if [[ ${CONFIGURATION:-} == Release ]]; then
+    # The linker debug map can contain absolute paths to object files.
+    /usr/bin/xcrun strip -S "$helper"
+    /bin/bash "$SRCROOT/Tools/SpotifyPlayer/check-build-paths.sh" "$helper"
+fi
+
 if [[ ${CODE_SIGNING_ALLOWED:-YES} != NO ]]; then
     identity=${EXPANDED_CODE_SIGN_IDENTITY:--}
     if [[ $identity == - ]]; then
