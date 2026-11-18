@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101010">
+  <meta name="description" content="Bop for Mac uses your AirPods to save the songs you bop to in a Spotify playlist.">
+  <meta property="og:title" content="Bop for Mac">
+  <meta property="og:description" content="Bop for Mac uses your AirPods to save the songs you bop to in a Spotify playlist.">
+  <meta property="og:type" content="website">
+  <title>Bop for Mac</title>
+  <link rel="icon" href="assets/icon.png" type="image/png">
+  <script src="theme.js?v=3"></script>
+  <link rel="stylesheet" href="styles.css?v=17">
+  <script src="download.js" defer></script>
+  <script type="module" src="demo.js?v=11"></script>
+</head>
+<body>
+  <header class="site-header">
+    <a class="wordmark" href="./" aria-label="Bop home">
+      <img src="assets/wordmark.png" width="224" height="124" alt="">
+    </a>
+    <button class="theme-toggle" type="button" hidden>
+      <!-- Heroicons 16px solid. See vendor/heroicons.LICENSE.txt. -->
+      <svg class="sun-icon" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false">
+        <path d="M8 1a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 1ZM10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0ZM12.95 4.11a.75.75 0 1 0-1.06-1.06l-1.062 1.06a.75.75 0 0 0 1.061 1.062l1.06-1.061ZM15 8a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 15 8ZM11.89 12.95a.75.75 0 0 0 1.06-1.06l-1.06-1.062a.75.75 0 0 0-1.062 1.061l1.061 1.06ZM8 12a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 12ZM5.172 11.89a.75.75 0 0 0-1.061-1.062L3.05 11.89a.75.75 0 1 0 1.06 1.06l1.06-1.06ZM4 8a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 4 8ZM4.11 5.172A.75.75 0 0 0 5.173 4.11L4.11 3.05a.75.75 0 1 0-1.06 1.06l1.06 1.06Z"/>
+      </svg>
+      <svg class="moon-icon" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false">
+        <path d="M14.438 10.148c.19-.425-.321-.787-.748-.601A5.5 5.5 0 0 1 6.453 2.31c.186-.427-.176-.938-.6-.748a6.501 6.501 0 1 0 8.585 8.586Z"/>
+      </svg>
+    </button>
+  </header>
+
+  <main>
+    <figure class="stage" aria-label="Bop bobblehead demo">
+      <div class="toy">
+        <img class="toy-poster" src="assets/bobblehead.webp?v=2" width="720" height="720"
+          alt="A bobblehead wearing AirPods at a tiny desk" fetchpriority="high">
+        <div class="toy-frames" aria-hidden="true"></div>
+        <canvas class="toy-canvas" aria-hidden="true"></canvas>
+        <span class="bop-cue" aria-hidden="true">
+          <img src="assets/wordmark.png" width="224" height="124" alt="">
+          <span></span>
+        </span>
+        <button class="toy-trigger" type="button" aria-label="Give the bobblehead a nod"
+          hidden></button>
+        <p id="toy-controls" hidden>Use the left and right arrow keys to turn, Home to reset,
+          and Enter or Space to nod.</p>
+      </div>
+      <span class="playlist-transfer" aria-hidden="true">♪</span>
+      <p class="sr-only" id="demo-status" role="status"></p>
+      <p class="sr-only" id="toy-status" role="status"></p>
+      <figcaption class="demo-player" hidden>
+        <div class="demo-transport" role="group" aria-label="Demo music">
+          <button class="playback-button" type="button" aria-label="Play song" aria-describedby="track-title">
+            <span class="play-icon" aria-hidden="true"></span>
+          </button>
+          <div class="now-playing" aria-live="polite" aria-atomic="true">
+            <p class="track-title" id="track-title">Play a song</p>
+            <p class="track-artist"></p>
+          </div>
+          <button class="next-song" type="button">Next song <span aria-hidden="true">→</span></button>
+        </div>
+        <div class="playlist-drawer" hidden>
+          <div class="demo-playlist">
+            <button type="button" class="playlist-summary" aria-expanded="false" aria-controls="playlist-content">
+              <span id="playlist-title">Recent bops</span>
+              <span class="playlist-count"></span>
+            </button>
+            <div class="playlist-content" id="playlist-content" inert>
+              <div class="playlist-content-clip">
+                <ul class="playlist-songs" aria-labelledby="playlist-title"></ul>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p class="player-error" role="status" hidden></p>
+      </figcaption>
+    </figure>
+
+    <h1>The songs you bop to, saved to your playlist.</h1>
+    <p class="intro">While Spotify plays, Bop uses your AirPods motion sensors to tell when you’re bopping along.</p>
+
+    <a class="download-link" href="https://github.com/201549BL/bop/releases/download/v0.1.0/Bop-0.1.0-macOS.zip"
+      data-local-download="downloads/Bop-0.1.0-macOS.zip" aria-describedby="download-requirements">Download for Mac</a>
+    <p class="requirements" id="download-requirements">macOS 14 or later <span aria-hidden="true">·</span> Compatible AirPods <span aria-hidden="true">·</span> Spotify Premium for autosave</p>
+    <a class="download-privacy-link" href="privacy.html">Privacy notice</a>
+  </main>
+
+  <footer>
+    <p>AirPods motion stays on your Mac.</p>
+    <details class="music-credits">
+      <summary>Music credits</summary>
+      <div class="music-credit-list">
+        <p><a href="https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100677">New Direction</a> by Kevin MacLeod (incompetech.com). <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Excerpt with fades.</p>
+        <p><a href="https://commons.wikimedia.org/wiki/File:Chopin_-_Waltz_in_A_minor,_B_150.ogg">Waltz in A minor, B. 150</a> by Frédéric Chopin, performed by Aya Higuchi, via Musopen. <a href="https://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0</a>. Excerpt with an end fade.</p>
+        <p><a href="https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1500026">EDM Detection Mode</a> by Kevin MacLeod (incompetech.com). <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Excerpt with fades and reduced gain.</p>
+        <p><a href="https://incompetech.com/wordpress/2012/02/got-funk/">Got Funk</a> by Kevin MacLeod (incompetech.com). <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Excerpt with fades and reduced gain.</p>
+        <p><a href="https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1100475">Feelin Good</a> by Kevin MacLeod (incompetech.com). <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Excerpt with fades and adjusted gain.</p>
+        <p><a href="https://incompetech.com/music/royalty-free/index.html?isrc=USUAN1500028">Carnivale Intrigue</a> by Kevin MacLeod (incompetech.com). <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>. Excerpt with fades and reduced gain.</p>
+      </div>
+    </details>
+  </footer>
+
+  <audio id="demo-audio" preload="none" loop></audio>
+</body>
+</html>

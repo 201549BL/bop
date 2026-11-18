@@ -1,0 +1,54 @@
+name: Bop
+options:
+  deploymentTarget:
+    macOS: "14.0"
+packages:
+  BopCore:
+    path: .
+targets:
+  Bop:
+    type: application
+    platform: macOS
+    configFiles:
+      Debug: Config/DebugSigning.xcconfig
+    sources:
+      - path: Sources/BopApp
+        excludes:
+          - Resources
+      - path: Sources/BopApp/Resources
+        buildPhase: resources
+    postBuildScripts:
+      - name: Embed Spotify Player Helper
+        script: '/bin/bash "$SRCROOT/Tools/SpotifyPlayer/embed.sh"'
+        # Xcode must re-sign the app when the script adds or removes these files.
+        outputFiles:
+          - $(TARGET_BUILD_DIR)/$(CONTENTS_FOLDER_PATH)/Helpers/spotify_player
+          - $(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/SpotifyPlayer-LICENSE.txt
+        basedOnDependencyAnalysis: false
+    dependencies:
+      - package: BopCore
+        product: BopCore
+    info:
+      path: Config/Info.plist
+      properties:
+        CFBundleDisplayName: Bop
+        CFBundleShortVersionString: "0.1.0"
+        CFBundleVersion: "1"
+        NSMotionUsageDescription: Bop uses AirPods motion to recognize when you bop your head.
+        LSMinimumSystemVersion: $(MACOSX_DEPLOYMENT_TARGET)
+        LSUIElement: true
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: local.bop.prototype
+        SWIFT_VERSION: "6.0"
+        CODE_SIGN_IDENTITY: "-"
+      configs:
+        Debug:
+          CODE_SIGN_IDENTITY: $(BOP_DEBUG_CODE_SIGN_IDENTITY)
+        Release:
+          ENABLE_HARDENED_RUNTIME: "YES"
+schemes:
+  Bop:
+    build:
+      targets:
+        Bop: all

@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101010">
+  <meta name="description" content="How Bop for Mac and the Bop website handle your data.">
+  <title>Privacy notice · Bop for Mac</title>
+  <link rel="icon" href="assets/icon.png" type="image/png">
+  <script src="theme.js?v=3"></script>
+  <link rel="stylesheet" href="styles.css?v=17">
+</head>
+<body>
+  <header class="site-header">
+    <a class="wordmark" href="./" aria-label="Bop home">
+      <img src="assets/wordmark.png" width="224" height="124" alt="">
+    </a>
+    <button class="theme-toggle" type="button" hidden>
+      <!-- Heroicons 16px solid. See vendor/heroicons.LICENSE.txt. -->
+      <svg class="sun-icon" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false">
+        <path d="M8 1a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 1ZM10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0ZM12.95 4.11a.75.75 0 1 0-1.06-1.06l-1.062 1.06a.75.75 0 0 0 1.061 1.062l1.06-1.061ZM15 8a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 15 8ZM11.89 12.95a.75.75 0 0 0 1.06-1.06l-1.06-1.062a.75.75 0 0 0-1.062 1.061l1.061 1.06ZM8 12a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 12ZM5.172 11.89a.75.75 0 0 0-1.061-1.062L3.05 11.89a.75.75 0 1 0 1.06 1.06l1.06-1.06ZM4 8a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 4 8ZM4.11 5.172A.75.75 0 0 0 5.173 4.11L4.11 3.05a.75.75 0 1 0-1.06 1.06l1.06 1.06Z"/>
+      </svg>
+      <svg class="moon-icon" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" focusable="false">
+        <path d="M14.438 10.148c.19-.425-.321-.787-.748-.601A5.5 5.5 0 0 1 6.453 2.31c.186-.427-.176-.938-.6-.748a6.501 6.501 0 1 0 8.585 8.586Z"/>
+      </svg>
+    </button>
+  </header>
+
+  <main class="privacy-notice">
+    <h1>Privacy notice</h1>
+
+    <section aria-labelledby="motion">
+      <h2 id="motion">AirPods motion</h2>
+      <p>Bop processes AirPods motion on your Mac to detect bops. If you choose <strong>Record</strong> in Motion Graphs, Bop keeps up to 20 seconds of motion samples in memory for replay. If you choose <strong>Save Recording…</strong>, Bop writes a JSON file to the location you select. You control that file and any copies you share.</p>
+    </section>
+
+    <section aria-labelledby="spotify">
+      <h2 id="spotify">Connecting Spotify</h2>
+      <p>Spotify is optional. If you connect, the bundled spotify-player helper opens Spotify’s approval screens in your browser. Spotify lists the permissions there. The helper’s standard permissions are broader than the account, playback, and playlist access Bop uses.</p>
+      <p>Bop uses your Spotify account ID to associate your sign-in and Bop playlist with your account. When you choose <strong>Create playlist</strong>, Bop looks for the playlist it previously created and creates one if needed.</p>
+      <p>While <strong>Autosave to playlist</strong> is on, a live bop prompts Bop to ask Spotify which track is playing on your connected account. Playback may be on another device. Tracks from a Spotify Private Session are excluded from Recent Bops and the playlist. Bop sends its requests directly to Spotify and checks the playlist for the track before adding it.</p>
+      <p>Bop keeps up to five recently matched track IDs, titles, artists, and detection times on your Mac for <strong>Recent Bops</strong>. Bop stores your sign-in credentials in macOS Keychain. Each helper command uses a private temporary folder on your Mac for its files and any copies of credentials it needs. Bop removes the folder when the command ends. An unexpected shutdown can leave temporary files behind.</p>
+      <p>Bop asks Spotify to keep the playlist off your public profile and out of search. People with the link can still open the playlist unless you choose <strong>Make private</strong> in Spotify. Spotify handles your account data and the playlist under its own <a href="https://www.spotify.com/legal/privacy-policy/">privacy policy</a>.</p>
+    </section>
+
+    <section aria-labelledby="disconnect">
+      <h2 id="disconnect">Turning off autosave or disconnecting</h2>
+      <p>Open Spotify’s details under <strong>Settings… → Music</strong> to turn off <strong>Autosave to playlist</strong> or choose <strong>Disconnect Spotify…</strong>. Disconnecting cancels pending Spotify work and clears the local account and playlist identifiers, Recent Bops, and the saved Keychain session. If macOS prevents Bop from removing your Keychain session, use <strong>Finish Disconnecting</strong> to retry.</p>
+      <p>Your playlist and previously saved songs stay in Spotify. You can manage or delete the playlist there. If you reconnect and choose <strong>Create playlist</strong>, Bop may find that playlist again.</p>
+    </section>
+
+    <section aria-labelledby="website">
+      <h2 id="website">This website</h2>
+      <p>The web demo plays its own audio excerpts and simulates saving songs to <strong>Recent bops</strong> in the page. The simulated list clears when you reload. The demo runs without a Spotify account or access to your AirPods.</p>
+      <p>The site saves your light or dark appearance choice in your browser’s local storage. You can clear it by removing this site’s data in your browser settings. The site itself uses no cookies or analytics.</p>
+      <p>When you visit this site on GitHub Pages, GitHub logs visitor IP addresses for security. Sites you open from external links handle your visits under their own privacy policies. See the <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement">GitHub General Privacy Statement</a>.</p>
+    </section>
+
+    <section aria-labelledby="contact">
+      <h2 id="contact">Contact</h2>
+      <p>For questions about your information, <a href="https://github.com/201549BL/bop/issues/new">contact the Bop maintainer on GitHub</a>. GitHub issues are public. Please leave out account identifiers, credentials, recordings, and other personal information.</p>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,2 @@
+BOP_DEBUG_CODE_SIGN_IDENTITY = -
+#include? "LocalSigning.xcconfig"

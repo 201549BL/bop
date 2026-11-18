@@ -1,0 +1,493 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0B1766757F583483F6E83A3A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1D1EDD2948E2E4453043E1F8 /* Assets.xcassets */; };
+		0C8D240DAD373DEF90508CB3 /* BopSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE356F3A76A569ECABDD2713 /* BopSession.swift */; };
+		125015331070FA4A5728B401 /* BopApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29BCAEC2F37A60A920047FBA /* BopApp.swift */; };
+		1385DA41A6313BF71EDB29E1 /* BopFeedbackHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 696ED6A2D84EFFA6DA40FBB9 /* BopFeedbackHUD.swift */; };
+		255FA8CB43B7F45A7649CF1C /* AirPodsMotionSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5D2567234829945E7C08B8 /* AirPodsMotionSource.swift */; };
+		29D4804F9F3DCEFC639F1C95 /* PracticeBeatButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3817DA7D0B841113ADF0BE4 /* PracticeBeatButton.swift */; };
+		2A8244EED39987AC302E2CE3 /* OnboardingTutorialDark.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = D3E2AF194A84A5D56D0FEBC6 /* OnboardingTutorialDark.mp4 */; };
+		3172444E3CD920FEB067E3C0 /* OnboardingTutorialDarkPoster.png in Resources */ = {isa = PBXBuildFile; fileRef = EE29CEC676D8FD1523CC529C /* OnboardingTutorialDarkPoster.png */; };
+		41C09750949F64AABC842298 /* SpotifySettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0912735CB1F662C8C6C69C4 /* SpotifySettingsView.swift */; };
+		4B41A4D7842DCD54AF27A151 /* BopComparisonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D5297039AD57091E087FF58 /* BopComparisonView.swift */; };
+		625F793B6035F3FFBB323DE5 /* SpotifyKeychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 298579E658AC2EFF9035FCA1 /* SpotifyKeychain.swift */; };
+		73E19C36D4C4A577CD888CC9 /* PracticeBeat.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3369390E4DF82BC63B52A82D /* PracticeBeat.mp3 */; };
+		7E74AF5DFD8938CB132FBC2F /* BobbleheadToy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BB29420CD51771B9D70038D /* BobbleheadToy.swift */; };
+		7EABD366DE0D532B00179D1A /* OnboardingTutorial.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 930E09A9FD1C4B15DB446DA7 /* OnboardingTutorial.mp4 */; };
+		82EBF401075FE4666DECB2CE /* OnboardingTutorialPoster.png in Resources */ = {isa = PBXBuildFile; fileRef = E54F9B3813AC9B414AE9DE03 /* OnboardingTutorialPoster.png */; };
+		85B49467D378A2596D670782 /* BopOnboardingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 701F918B029149CD4338FA1F /* BopOnboardingView.swift */; };
+		867649672B3F233CDEEFA616 /* DemoMotion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 881C4C7DF67E747CA9569362 /* DemoMotion.swift */; };
+		9D1BB410C2256AE53455A3D5 /* BopView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D82AC8E1F1A48FCD60B4054B /* BopView.swift */; };
+		A69177C1744F57A8AB7984A0 /* BobbleheadDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 127B99A360F2EA105B33D5AD /* BobbleheadDemoView.swift */; };
+		B64A4673231C1B5097481CA4 /* BopCore in Frameworks */ = {isa = PBXBuildFile; productRef = 5999110B7F48B478D0CA26D7 /* BopCore */; };
+		B696556CF078DE88A464AD8D /* SpotifyIntegration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524428BD5C2AA7A8B13DD919 /* SpotifyIntegration.swift */; };
+		B79D61CBBFD10E417CFE6A60 /* BopOnboardingTutorial.swift in Sources */ = {isa = PBXBuildFile; fileRef = C586DA645C3E9993F8EA9A38 /* BopOnboardingTutorial.swift */; };
+		D4C09A5DA6CEC79718381A3B /* BopSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65285AFA68E9FB7DEF15952D /* BopSettingsView.swift */; };
+		E4635597B3C3F222AB811AAB /* BopMenuWordmark.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB1451561F05D74B04E7D774 /* BopMenuWordmark.swift */; };
+		EA313EBC8D886C9CF3EED862 /* SpotifyPlayerConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10A79A638AF82D3977651E7E /* SpotifyPlayerConnection.swift */; };
+		EE3960B1EFFD3810FF01AAFE /* DeskBobblehead.usdz in Resources */ = {isa = PBXBuildFile; fileRef = AADE5774F9AAE66D65BBCAB8 /* DeskBobblehead.usdz */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		10A79A638AF82D3977651E7E /* SpotifyPlayerConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifyPlayerConnection.swift; sourceTree = "<group>"; };
+		127B99A360F2EA105B33D5AD /* BobbleheadDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BobbleheadDemoView.swift; sourceTree = "<group>"; };
+		1D1EDD2948E2E4453043E1F8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		1D5297039AD57091E087FF58 /* BopComparisonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BopComparisonView.swift; sourceTree = "<group>"; };
+		215FEA178C48DBDC1AC7211F /* bop */ = {isa = PBXFileReference; lastKnownFileType = folder; name = bop; path = .; sourceTree = SOURCE_ROOT; };
+		298579E658AC2EFF9035FCA1 /* SpotifyKeychain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifyKeychain.swift; sourceTree = "<group>"; };
+		29BCAEC2F37A60A920047FBA /* BopApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BopApp.swift; sourceTree = "<group>"; };
+		3369390E4DF82BC63B52A82D /* PracticeBeat.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = PracticeBeat.mp3; sourceTree = "<group>"; };
+		3D5D2567234829945E7C08B8 /* AirPodsMotionSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirPodsMotionSource.swift; sourceTree = "<group>"; };
+		524428BD5C2AA7A8B13DD919 /* SpotifyIntegration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifyIntegration.swift; sourceTree = "<group>"; };
+		65285AFA68E9FB7DEF15952D /* BopSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BopSettingsView.swift; sourceTree = "<group>"; };
+		696ED6A2D84EFFA6DA40FBB9 /* BopFeedbackHUD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BopFeedbackHUD.swift; sourceTree = "<group>"; };
+		701F918B029149CD4338FA1F /* BopOnboardingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BopOnboardingView.swift; sourceTree = "<group>"; };
+		881C4C7DF67E747CA9569362 /* DemoMotion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoMotion.swift; sourceTree = "<group>"; };
+		930E09A9FD1C4B15DB446DA7 /* OnboardingTutorial.mp4 */ = {isa = PBXFileReference; path = OnboardingTutorial.mp4; sourceTree = "<group>"; };
+		9BB29420CD51771B9D70038D /* BobbleheadToy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BobbleheadToy.swift; sourceTree = "<group>"; };
+		AADE5774F9AAE66D65BBCAB8 /* DeskBobblehead.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = DeskBobblehead.usdz; sourceTree = "<group>"; };
+		B3817DA7D0B841113ADF0BE4 /* PracticeBeatButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeBeatButton.swift; sourceTree = "<group>"; };
+		BB1451561F05D74B04E7D774 /* BopMenuWordmark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BopMenuWordmark.swift; sourceTree = "<group>"; };
+		C586DA645C3E9993F8EA9A38 /* BopOnboardingTutorial.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BopOnboardingTutorial.swift; sourceTree = "<group>"; };
+		D3E2AF194A84A5D56D0FEBC6 /* OnboardingTutorialDark.mp4 */ = {isa = PBXFileReference; path = OnboardingTutorialDark.mp4; sourceTree = "<group>"; };
+		D82AC8E1F1A48FCD60B4054B /* BopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BopView.swift; sourceTree = "<group>"; };
+		DF75E3EA5E9168DD92332170 /* Bop.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Bop.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E0912735CB1F662C8C6C69C4 /* SpotifySettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifySettingsView.swift; sourceTree = "<group>"; };
+		E54F9B3813AC9B414AE9DE03 /* OnboardingTutorialPoster.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OnboardingTutorialPoster.png; sourceTree = "<group>"; };
+		EDA0E61E12B89B42F1AC6A58 /* DebugSigning.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = DebugSigning.xcconfig; sourceTree = "<group>"; };
+		EE29CEC676D8FD1523CC529C /* OnboardingTutorialDarkPoster.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = OnboardingTutorialDarkPoster.png; sourceTree = "<group>"; };
+		EE356F3A76A569ECABDD2713 /* BopSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BopSession.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		57B4DF945CE57A8552C36517 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B64A4673231C1B5097481CA4 /* BopCore in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		0565F555EC81FE7448E7C99E /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				EDA0E61E12B89B42F1AC6A58 /* DebugSigning.xcconfig */,
+			);
+			path = Config;
+			sourceTree = "<group>";
+		};
+		3F1B85D351656746C746DB1B /* BopApp */ = {
+			isa = PBXGroup;
+			children = (
+				3D5D2567234829945E7C08B8 /* AirPodsMotionSource.swift */,
+				127B99A360F2EA105B33D5AD /* BobbleheadDemoView.swift */,
+				9BB29420CD51771B9D70038D /* BobbleheadToy.swift */,
+				29BCAEC2F37A60A920047FBA /* BopApp.swift */,
+				1D5297039AD57091E087FF58 /* BopComparisonView.swift */,
+				696ED6A2D84EFFA6DA40FBB9 /* BopFeedbackHUD.swift */,
+				BB1451561F05D74B04E7D774 /* BopMenuWordmark.swift */,
+				C586DA645C3E9993F8EA9A38 /* BopOnboardingTutorial.swift */,
+				701F918B029149CD4338FA1F /* BopOnboardingView.swift */,
+				EE356F3A76A569ECABDD2713 /* BopSession.swift */,
+				65285AFA68E9FB7DEF15952D /* BopSettingsView.swift */,
+				D82AC8E1F1A48FCD60B4054B /* BopView.swift */,
+				881C4C7DF67E747CA9569362 /* DemoMotion.swift */,
+				B3817DA7D0B841113ADF0BE4 /* PracticeBeatButton.swift */,
+				73A97E261811EDD1388B7464 /* Integrations */,
+			);
+			name = BopApp;
+			path = Sources/BopApp;
+			sourceTree = "<group>";
+		};
+		573B6BDE8673BAE273A40C61 = {
+			isa = PBXGroup;
+			children = (
+				3F1B85D351656746C746DB1B /* BopApp */,
+				0565F555EC81FE7448E7C99E /* Config */,
+				F16204ABFEF20FFC830D6964 /* Packages */,
+				F3F16EB0571B407C2D79C828 /* Resources */,
+				F73EDE30F00CE69A84E0DF12 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		73A97E261811EDD1388B7464 /* Integrations */ = {
+			isa = PBXGroup;
+			children = (
+				A7C8D8ADE2879B7E9F2C3472 /* Spotify */,
+			);
+			path = Integrations;
+			sourceTree = "<group>";
+		};
+		A7C8D8ADE2879B7E9F2C3472 /* Spotify */ = {
+			isa = PBXGroup;
+			children = (
+				524428BD5C2AA7A8B13DD919 /* SpotifyIntegration.swift */,
+				298579E658AC2EFF9035FCA1 /* SpotifyKeychain.swift */,
+				10A79A638AF82D3977651E7E /* SpotifyPlayerConnection.swift */,
+				E0912735CB1F662C8C6C69C4 /* SpotifySettingsView.swift */,
+			);
+			path = Spotify;
+			sourceTree = "<group>";
+		};
+		F16204ABFEF20FFC830D6964 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				215FEA178C48DBDC1AC7211F /* bop */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
+		F3F16EB0571B407C2D79C828 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				1D1EDD2948E2E4453043E1F8 /* Assets.xcassets */,
+				AADE5774F9AAE66D65BBCAB8 /* DeskBobblehead.usdz */,
+				930E09A9FD1C4B15DB446DA7 /* OnboardingTutorial.mp4 */,
+				D3E2AF194A84A5D56D0FEBC6 /* OnboardingTutorialDark.mp4 */,
+				EE29CEC676D8FD1523CC529C /* OnboardingTutorialDarkPoster.png */,
+				E54F9B3813AC9B414AE9DE03 /* OnboardingTutorialPoster.png */,
+				3369390E4DF82BC63B52A82D /* PracticeBeat.mp3 */,
+			);
+			name = Resources;
+			path = Sources/BopApp/Resources;
+			sourceTree = "<group>";
+		};
+		F73EDE30F00CE69A84E0DF12 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				DF75E3EA5E9168DD92332170 /* Bop.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		5A00D8B7CE84F06A63BEFBE2 /* Bop */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = DC85690467E71D0182F93BB6 /* Build configuration list for PBXNativeTarget "Bop" */;
+			buildPhases = (
+				6ACFCEC0E537A1CDFA9E6170 /* Sources */,
+				745EC59016294D1332D8A392 /* Resources */,
+				57B4DF945CE57A8552C36517 /* Frameworks */,
+				1838C908FA7397B60CD7715D /* Embed Spotify Player Helper */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Bop;
+			packageProductDependencies = (
+				5999110B7F48B478D0CA26D7 /* BopCore */,
+			);
+			productName = Bop;
+			productReference = DF75E3EA5E9168DD92332170 /* Bop.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		8767101CA494D573839D1269 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+				};
+			};
+			buildConfigurationList = 71E45962E1F5832BA5A1068B /* Build configuration list for PBXProject "Bop" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 573B6BDE8673BAE273A40C61;
+			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				5399271AA293318FA04079E2 /* XCLocalSwiftPackageReference "." */,
+			);
+			preferredProjectObjectVersion = 77;
+			productRefGroup = F73EDE30F00CE69A84E0DF12 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				5A00D8B7CE84F06A63BEFBE2 /* Bop */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		745EC59016294D1332D8A392 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0B1766757F583483F6E83A3A /* Assets.xcassets in Resources */,
+				EE3960B1EFFD3810FF01AAFE /* DeskBobblehead.usdz in Resources */,
+				7EABD366DE0D532B00179D1A /* OnboardingTutorial.mp4 in Resources */,
+				2A8244EED39987AC302E2CE3 /* OnboardingTutorialDark.mp4 in Resources */,
+				3172444E3CD920FEB067E3C0 /* OnboardingTutorialDarkPoster.png in Resources */,
+				82EBF401075FE4666DECB2CE /* OnboardingTutorialPoster.png in Resources */,
+				73E19C36D4C4A577CD888CC9 /* PracticeBeat.mp3 in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		1838C908FA7397B60CD7715D /* Embed Spotify Player Helper */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Spotify Player Helper";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(TARGET_BUILD_DIR)/$(CONTENTS_FOLDER_PATH)/Helpers/spotify_player",
+				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/SpotifyPlayer-LICENSE.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/bin/bash \"$SRCROOT/Tools/SpotifyPlayer/embed.sh\"";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		6ACFCEC0E537A1CDFA9E6170 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				255FA8CB43B7F45A7649CF1C /* AirPodsMotionSource.swift in Sources */,
+				A69177C1744F57A8AB7984A0 /* BobbleheadDemoView.swift in Sources */,
+				7E74AF5DFD8938CB132FBC2F /* BobbleheadToy.swift in Sources */,
+				125015331070FA4A5728B401 /* BopApp.swift in Sources */,
+				4B41A4D7842DCD54AF27A151 /* BopComparisonView.swift in Sources */,
+				1385DA41A6313BF71EDB29E1 /* BopFeedbackHUD.swift in Sources */,
+				E4635597B3C3F222AB811AAB /* BopMenuWordmark.swift in Sources */,
+				B79D61CBBFD10E417CFE6A60 /* BopOnboardingTutorial.swift in Sources */,
+				85B49467D378A2596D670782 /* BopOnboardingView.swift in Sources */,
+				0C8D240DAD373DEF90508CB3 /* BopSession.swift in Sources */,
+				D4C09A5DA6CEC79718381A3B /* BopSettingsView.swift in Sources */,
+				9D1BB410C2256AE53455A3D5 /* BopView.swift in Sources */,
+				867649672B3F233CDEEFA616 /* DemoMotion.swift in Sources */,
+				29D4804F9F3DCEFC639F1C95 /* PracticeBeatButton.swift in Sources */,
+				B696556CF078DE88A464AD8D /* SpotifyIntegration.swift in Sources */,
+				625F793B6035F3FFBB323DE5 /* SpotifyKeychain.swift in Sources */,
+				EA313EBC8D886C9CF3EED862 /* SpotifyPlayerConnection.swift in Sources */,
+				41C09750949F64AABC842298 /* SpotifySettingsView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		159BDA89CFD01B180C973361 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = EDA0E61E12B89B42F1AC6A58 /* DebugSigning.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "$(BOP_DEBUG_CODE_SIGN_IDENTITY)";
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = Config/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = local.bop.prototype;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		88775DE904548DB5C0A29D30 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "-";
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				INFOPLIST_FILE = Config/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = local.bop.prototype;
+				SDKROOT = macosx;
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		CDC6D65583F05EFDCBD4A7C2 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		CE843FF72A4A5826A37DF89F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		71E45962E1F5832BA5A1068B /* Build configuration list for PBXProject "Bop" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CDC6D65583F05EFDCBD4A7C2 /* Debug */,
+				CE843FF72A4A5826A37DF89F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		DC85690467E71D0182F93BB6 /* Build configuration list for PBXNativeTarget "Bop" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				159BDA89CFD01B180C973361 /* Debug */,
+				88775DE904548DB5C0A29D30 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		5399271AA293318FA04079E2 /* XCLocalSwiftPackageReference "." */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = .;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		5999110B7F48B478D0CA26D7 /* BopCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = BopCore;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 8767101CA494D573839D1269 /* Project object */;
+}
