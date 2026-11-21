@@ -38,7 +38,7 @@
       <h2 id="spotify">Connecting Spotify</h2>
       <p>Spotify is optional. Bop doesn’t sign in to Spotify or store any Spotify password or token. Instead, it works with the Spotify app on your Mac, which stays signed in to your account.</p>
       <p>When you choose <strong>Connect…</strong>, Bop opens Spotify with a debugging port on 127.0.0.1, which only programs on your Mac can reach. Bop controls Spotify through that port to read what’s playing and to manage its playlist. If Spotify is already open without the port, Bop asks before restarting it. While Spotify runs with the port open, other programs on your Mac can control Spotify the same way. To close the port, quit Spotify and open it again normally.</p>
-      <p>Bop uses your Spotify username to associate your playlist and Recent Bops with your account. When you choose <strong>Create playlist</strong>, Bop looks for the playlist it previously created. If it needs a new one, Bop names it <strong>Bop!</strong>.</p>
+      <p>Bop uses your Spotify username to associate your playlist and Recent Bops with your account. When you connect Spotify, Bop looks for the playlist it previously created and turns on <strong>Autosave to playlist</strong>. If it needs a new one, Bop names it <strong>Bop!</strong>.</p>
       <p>While <strong>Autosave to playlist</strong> is on, a live bop prompts Bop to ask the Spotify app which track is playing. Tracks from a Spotify Private Session are excluded from Recent Bops and the playlist. Bop checks the playlist for the track before adding it. Spotify sends these changes to its servers as it does for changes you make in the app.</p>
       <p>Bop keeps up to five recently matched track IDs, titles, artists, and detection times on your Mac for <strong>Recent Bops</strong>.</p>
       <p>Bop creates the playlist as private, so it starts off your profile and only you can open it. You can rename or share it in Spotify later, and Bop keeps saving to it. Spotify handles your account data and the playlist under its own <a href="https://www.spotify.com/legal/privacy-policy/">privacy policy</a>.</p>
@@ -47,7 +47,7 @@
     <section aria-labelledby="disconnect">
       <h2 id="disconnect">Turning off autosave or disconnecting</h2>
       <p>Open Spotify’s details under <strong>Settings… → Music</strong> to turn off <strong>Autosave to playlist</strong> or choose <strong>Disconnect Spotify…</strong>. Disconnecting cancels pending Spotify work and clears the local account and playlist identifiers and Recent Bops. Spotify keeps running, and its debugging port stays open until you quit Spotify.</p>
-      <p>Your playlist and previously saved songs stay in Spotify. You can manage or delete the playlist there. If you reconnect and choose <strong>Create playlist</strong>, Bop may find that playlist again.</p>
+      <p>Your playlist and previously saved songs stay in Spotify. You can manage or delete the playlist there. If you reconnect, Bop finds that playlist again.</p>
     </section>
 
     <section aria-labelledby="website">

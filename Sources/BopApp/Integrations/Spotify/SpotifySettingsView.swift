@@ -116,7 +116,7 @@ struct SpotifySettingsView: View {
         case .needsRestart: "Spotify needs a restart"
         case .failed: "Couldn’t connect"
         case .connected:
-            if spotify.isCreatingPlaylist && !showsDetails { "Connected · Creating playlist…" }
+            if spotify.isCreatingPlaylist && !showsDetails { "Connected · Setting up playlist…" }
             else if spotify.playlistURL == nil { "Connected" }
             else { spotify.autosave ? "Connected · Autosave on" : "Connected · Saving paused" }
         }
@@ -173,7 +173,7 @@ struct SpotifySettingsView: View {
                         ProgressView()
                             .controlSize(.small)
                             .accessibilityHidden(true)
-                        Text("Creating playlist…")
+                        Text("Setting up playlist…")
                             .foregroundStyle(.secondary)
                     }
                 } else {

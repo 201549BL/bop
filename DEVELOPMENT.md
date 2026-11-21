@@ -13,7 +13,7 @@ To sign Debug builds with your own certificate, add a local `Config/LocalSigning
 ## Verify with AirPods and Spotify
 
 1. Complete AirPods setup, play a Spotify track, and confirm the menu bar cue appears when you nod in rhythm with Bop's windows closed.
-2. With Spotify closed, choose **Connect…** and confirm Bop opens Spotify. Quit Spotify, open it normally, and confirm Bop offers **Restart Spotify…** and that Spotify reopens after you confirm. Create the **Bop!** playlist with an account new to Bop, confirm Spotify shows it as private, and turn on autosave. Bop twice to one track and once to a second track. Verify that both tracks appear once. Relaunch Bop and confirm **Open Playlist** opens the same playlist.
+2. With Spotify closed, choose **Connect…** and confirm Bop opens Spotify. Quit Spotify, open it normally, and confirm Bop offers **Restart Spotify…** and that Spotify reopens after you confirm. With an account new to Bop, confirm that connecting creates the **Bop!** playlist, that Spotify shows it as private, and that autosave is on. Disconnect and connect again, and confirm Bop finds the same playlist. Bop twice to one track and once to a second track. Verify that both tracks appear once. Relaunch Bop and confirm **Open Playlist** opens the same playlist.
 3. Verify paused playback, a Spotify Private Session, demo and recording replays, and AirPods setup practice leave the playlist unchanged.
 4. Quit Spotify and bop. Verify the cue says to open Spotify. Relaunch Bop with Spotify closed and confirm it doesn't open Spotify.
 5. Disconnect Spotify in Bop and verify that Recent Bops and the local playlist link disappear and further bops leave the Spotify playlist unchanged.

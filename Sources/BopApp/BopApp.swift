@@ -237,6 +237,8 @@ final class BopAppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             NSWorkspace.shared.open(url)
         case .openBopPlaylist:
             if let url = spotify.playlistURL { NSWorkspace.shared.open(url) }
+        case .openSpotify:
+            spotify.connect()
         case .quit:
             NSApp.terminate(nil)
         }
@@ -244,9 +246,9 @@ final class BopAppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 }
 
 @MainActor
-private final class BopMenuBar: NSObject, NSPopoverDelegate {
+private final class BopMenuBar: NSObject {
     enum Action {
-        case toggleListening, showSettings, showMusicSettings, openBopPlaylist, openTrack(URL), quit
+        case toggleListening, showSettings, showMusicSettings, openSpotify, openBopPlaylist, openTrack(URL), quit
     }
 
     private enum Cue {
@@ -266,7 +268,7 @@ private final class BopMenuBar: NSObject, NSPopoverDelegate {
     private let isSettingUp: () -> Bool
     private let perform: (Action) -> Void
     private let item = NSStatusBar.system.statusItem(withLength: BopMenuWordmark.width)
-    private let popover = NSPopover()
+    private let menu = BopStatusMenu()
     private let hud = BopFeedbackHUD()
     private let listeningDot = BopListeningDot()
     private var visibilityObservation: NSKeyValueObservation?
@@ -290,13 +292,11 @@ private final class BopMenuBar: NSObject, NSPopoverDelegate {
         self.perform = perform
         super.init()
 
-        popover.behavior = .transient
-        popover.delegate = self
+        menu.willOpen = { [weak self] in self?.prepareMenu() }
+        item.menu = menu.menu
 
         if let button = item.button {
             button.imagePosition = .imageOnly
-            button.target = self
-            button.action = #selector(toggleMenu(_:))
             listeningDot.isHidden = true
             listeningDot.translatesAutoresizingMaskIntoConstraints = false
             button.addSubview(listeningDot)
@@ -321,26 +321,26 @@ private final class BopMenuBar: NSObject, NSPopoverDelegate {
         observeSession()
     }
 
-    @objc private func toggleMenu(_ sender: NSStatusBarButton) {
-        if popover.isShown {
-            popover.close()
-            return
-        }
+    private func prepareMenu() {
         hud.dismiss()
         showsRecentBops = false
+        spotify.refresh()
         updateMenu(makeMenuContent())
-        popover.show(relativeTo: sender.bounds, of: sender, preferredEdge: .minY)
-        if let view = popover.contentViewController?.view, let window = view.window {
-            window.makeKey()
-            window.makeFirstResponder(view)
-        }
-        sender.highlight(true)
     }
 
     private func makeMenuContent() -> BopMenuContent {
         let hasPlaylist = spotify.playlistURL != nil
         let hasAutosave = spotify.autosave
-        let autosaveStatus = hasPlaylist ? (hasAutosave ? "Spotify autosave on" : "Spotify autosave off") : nil
+        let spotifyRow = BopMenuSpotifyRow(spotify.connection)
+        let autosaveStatus: String? = if spotify.connection == .connecting {
+            "Connecting to Spotify…"
+        } else if hasAutosave, let spotifyRow {
+            spotifyRow.saveBlocker
+        } else if hasPlaylist {
+            hasAutosave ? "Spotify autosave on" : "Spotify autosave off"
+        } else {
+            nil
+        }
 
         let actionTitle: String
         let symbol: String
@@ -360,7 +360,7 @@ private final class BopMenuBar: NSObject, NSPopoverDelegate {
             case .waiting, .disconnected, nil: "Waiting for AirPods"
             default: session.status
             }
-            if isListening, hasPlaylist, hasAutosave { detail = "Saving songs to Spotify" }
+            if isListening, hasPlaylist, hasAutosave, spotify.isConnected { detail = "Saving songs to Spotify" }
         } else if session.isReplaying {
             actionTitle = "Stop Replay"
             symbol = "stop"
@@ -380,6 +380,7 @@ private final class BopMenuBar: NSObject, NSPopoverDelegate {
             tracks: spotify.recentBops,
             lastResult: lastBopDetail.map { $0 == Self.bopDetected ? $0 : "Last bop · \($0)" },
             providerConnected: spotify.isEnabled,
+            spotifyRow: spotifyRow,
             autosaveEnabled: hasAutosave,
             playlistAvailable: hasPlaylist,
             isExpanded: showsRecentBops,
@@ -389,47 +390,39 @@ private final class BopMenuBar: NSObject, NSPopoverDelegate {
                 self.updateMenu(self.makeMenuContent())
             },
             perform: { [weak self] action in
-                self?.popover.close()
-                self?.perform(action)
+                self?.menu.dismiss()
+                // Let the menu finish closing before a window opens or the app quits.
+                DispatchQueue.main.async { self?.perform(action) }
             },
-            dismiss: { [weak self] in self?.popover.close() },
+            dismiss: { [weak self] in self?.menu.dismiss() },
             resize: { [weak self] size in self?.resizeMenu(to: size) }
         )
     }
 
     private func updateMenu(_ content: BopMenuContent) {
-        if popover.isShown, let controller = popover.contentViewController as? NSHostingController<BopMenuContent> {
+        if menu.isVisible, let controller = menu.content as? NSHostingController<BopMenuContent> {
             controller.rootView = content
             return
         }
 
         let controller = NSHostingController(rootView: content)
         controller.sizingOptions = []
-        popover.contentViewController = controller
-        popover.contentSize = controller.sizeThatFits(in: NSSize(width: 300, height: CGFloat.greatestFiniteMagnitude))
+        menu.setContent(controller)
     }
 
     private func resizeMenu(to measuredSize: CGSize) {
-        // Keep the anchored edge from shifting as AppKit rounds window frames.
-        let size = CGSize(width: measuredSize.width, height: measuredSize.height.rounded(.up))
-        guard popover.isShown, size.height > 0, popover.contentSize != size else { return }
         // SwiftUI animates the layout and supplies its current size on every frame.
-        let animates = popover.animates
-        popover.animates = false
-        popover.contentSize = size
-        popover.animates = animates
-    }
-
-    func popoverDidClose(_ notification: Notification) {
-        item.button?.highlight(false)
+        let size = CGSize(width: measuredSize.width, height: measuredSize.height.rounded(.up))
+        guard menu.isVisible, size.height > 0 else { return }
+        menu.resize(to: size)
     }
 
     func showBop(event: Int, detail: String?, awaitingPlayback: Bool, showHUD: Bool) {
         feedbackEvent = event
         lastBopDetail = detail ?? Self.bopDetected
         cueTask?.cancel()
-        if popover.isShown, showsRecentBops { updateMenu(makeMenuContent()) }
-        if showHUD, item.isVisible, !popover.isShown, let button = item.button {
+        if menu.isVisible, showsRecentBops { updateMenu(makeMenuContent()) }
+        if showHUD, item.isVisible, !menu.isVisible, let button = item.button {
             hud.show(event: event, detail: detail, awaitingPlayback: awaitingPlayback, anchoredTo: button)
         }
         startCue()
@@ -442,7 +435,7 @@ private final class BopMenuBar: NSObject, NSPopoverDelegate {
             hud.update(event: event, detail: "Saving to playlist…", track: track)
         case .result(let result):
             lastBopDetail = result
-            if popover.isShown, showsRecentBops { updateMenu(makeMenuContent()) }
+            if menu.isVisible, showsRecentBops { updateMenu(makeMenuContent()) }
             hud.update(event: event, detail: result)
         }
     }
@@ -471,7 +464,7 @@ private final class BopMenuBar: NSObject, NSPopoverDelegate {
         }
         item.button?.setAccessibilityLabel(content.status.isListening ? "Bop, listening" : "Bop")
         listeningDot.isHidden = !content.status.isListening
-        if popover.isShown { updateMenu(content) }
+        if menu.isVisible { updateMenu(content) }
     }
 
     private func startCue() {
@@ -571,7 +564,7 @@ private struct BopMenuStatusHeader: View {
 
 private struct BopMenuContent: View {
     private enum Row: Hashable {
-        case listening, musicSetup, recentBops, track(String), playlist, settings, quit
+        case listening, musicSetup, spotify, recentBops, track(String), playlist, settings, quit
     }
 
     let status: BopMenuStatusHeader
@@ -580,6 +573,7 @@ private struct BopMenuContent: View {
     let tracks: [SpotifyIntegration.RecentBop]
     let lastResult: String?
     let providerConnected: Bool
+    let spotifyRow: BopMenuSpotifyRow?
     let autosaveEnabled: Bool
     let playlistAvailable: Bool
     let isExpanded: Bool
@@ -598,6 +592,11 @@ private struct BopMenuContent: View {
             menuRow(.listening, listeningTitle, symbol: listeningSymbol) { perform(.toggleListening) }
             divider
             if providerConnected {
+                if let spotifyRow {
+                    menuRow(.spotify, spotifyRow.title, symbol: spotifyRow.symbol, detail: spotifyRow.detail) {
+                        perform(spotifyRow.action)
+                    }
+                }
                 menuRow(.recentBops, "Recent Bops", symbol: "clock", action: toggleRecentBops) {
                     Image(systemName: "chevron.right")
                         .font(.system(size: 9, weight: .semibold))
@@ -757,7 +756,13 @@ private struct BopMenuContent: View {
 
     private func moveFocus(_ direction: MoveCommandDirection) {
         guard direction == .up || direction == .down else { return }
-        var rows: [Row] = [.listening, providerConnected ? .recentBops : .musicSetup]
+        var rows: [Row] = [.listening]
+        if providerConnected {
+            if spotifyRow != nil { rows.append(.spotify) }
+            rows.append(.recentBops)
+        } else {
+            rows.append(.musicSetup)
+        }
         if providerConnected, isExpanded {
             rows.append(contentsOf: linkedTracks.map { .track($0.track.uri) })
             if linkedTracks.isEmpty, !autosaveEnabled { rows.append(.musicSetup) }
@@ -817,5 +822,83 @@ extension NSWindow {
             }
         }
         return true
+    }
+}
+
+/// The menu row that tells the user what Spotify needs before Bop can save songs.
+private struct BopMenuSpotifyRow {
+    let title: String
+    let detail: String
+    let symbol: String
+    let saveBlocker: String
+    let action: BopMenuBar.Action
+
+    init?(_ connection: SpotifyIntegration.Connection) {
+        switch connection {
+        case .spotifyNotRunning:
+            title = "Open Spotify"
+            detail = "Bop saves songs while Spotify is open"
+            symbol = "arrow.up.forward.app"
+            saveBlocker = "Open Spotify to save songs"
+            action = .openSpotify
+        case .needsRestart:
+            title = "Restart Spotify…"
+            detail = "Spotify is open without Bop’s connection"
+            symbol = "arrow.clockwise"
+            saveBlocker = "Restart Spotify to save songs"
+            action = .showMusicSettings
+        case .failed(let message):
+            title = "Spotify Needs Attention…"
+            detail = message
+            symbol = "exclamationmark.triangle"
+            saveBlocker = "Spotify isn’t saving songs"
+            action = .showMusicSettings
+        case .off, .connecting, .connected:
+            return nil
+        }
+    }
+}
+
+/// The status item's menu. A real NSMenu, so the system draws the icon highlight, the menu
+/// background, and the placement, and hosts Bop's SwiftUI content as a single item.
+@MainActor
+private final class BopStatusMenu: NSObject, NSMenuDelegate {
+    private static let width: CGFloat = 300
+    let menu = NSMenu()
+    private let contentItem = NSMenuItem()
+    private(set) var content: NSViewController?
+    private(set) var isVisible = false
+    var willOpen: (() -> Void)?
+
+    override init() {
+        super.init()
+        menu.delegate = self
+        menu.addItem(contentItem)
+    }
+
+    func setContent(_ controller: NSViewController) {
+        content = controller
+        let height = (controller as? NSHostingController<BopMenuContent>)?
+            .sizeThatFits(in: NSSize(width: Self.width, height: .greatestFiniteMagnitude)).height ?? 0
+        controller.view.frame = NSRect(x: 0, y: 0, width: Self.width, height: height)
+        contentItem.view = controller.view
+    }
+
+    func resize(to size: CGSize) {
+        guard let view = contentItem.view, view.frame.size != size else { return }
+        view.setFrameSize(size)
+    }
+
+    func dismiss() {
+        menu.cancelTracking()
+    }
+
+    func menuWillOpen(_ menu: NSMenu) {
+        willOpen?()
+        isVisible = true
+    }
+
+    func menuDidClose(_ menu: NSMenu) {
+        isVisible = false
     }
 }
