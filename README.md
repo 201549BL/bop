@@ -4,7 +4,7 @@ Bop is a macOS menu bar app that uses your AirPods to detect when you nod to mus
 
 [Download for Mac](https://github.com/201549BL/bop/releases/download/v0.1.0/Bop-0.1.0-macOS.zip) · [Homepage and demo](https://201549bl.github.io/bop/)
 
-Requires macOS 14 or later and AirPods with motion support.
+Requires macOS 14 or later and AirPods with motion support. Song saving also needs the Spotify app for Mac.
 
 ## Get started
 
@@ -12,7 +12,7 @@ Requires macOS 14 or later and AirPods with motion support.
 2. Open Bop, follow the AirPods setup, and allow motion access when macOS asks.
 3. Use **BOP!** in the menu bar to start or pause listening.
 
-For optional song saving, connect your Spotify Premium account in **Settings → Music**, choose **Create playlist**, and turn on **Autosave to playlist**. New playlists are named **Bop!**.
+For optional song saving, sign in to the Spotify app, choose **Connect…** under Spotify in Bop's settings, then **Create playlist**, and turn on **Autosave to playlist**. New playlists are named **Bop!** and are private. Bop opens Spotify with a local connection it uses to read what's playing. If Spotify is already open without it, Bop offers to restart Spotify, which stops your music briefly.
 
 AirPods motion is processed on your Mac. [Privacy notice](https://201549bl.github.io/bop/privacy.html)
 
