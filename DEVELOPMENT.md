@@ -2,25 +2,21 @@
 
 Use Xcode with Swift 6. Open `Bop.xcodeproj` and run the **Bop** scheme on **My Mac**. Run `swift test` for detector tests. After changing `project.yml` or adding app source files, regenerate the project with `xcodegen generate`.
 
-## Build with Spotify support
+## How Spotify support works
 
-Install Rust and Cargo, then run these commands from the repository root.
+Bop talks to the Spotify app for Mac over the Chrome DevTools Protocol on `127.0.0.1:9222`, the same port spotr uses, so both can share one Spotify launch. `SpotifyDesktop` lists the pages at `/json/list`, opens the `xpui` page's WebSocket, and runs `Sources/BopApp/Resources/SpotifyAgent.js` with one `Runtime.evaluate` per request. The script finds Spotify's internal API registry through React and calls methods such as `PlayerAPI.getState` and `PlaylistAPI.add`. These APIs are private and can change with any Spotify update. A missing API or method surfaces as "Spotify changed something Bop relies on."
 
-```sh
-bash Tools/SpotifyPlayer/build.sh --native
-xcodebuild -scheme Bop build BOP_BUNDLE_SPOTIFY_PLAYER=YES
-```
+To use Spotify while developing, quit Spotify and let Bop open it, or start it yourself with `open -a Spotify --args --remote-debugging-port=9222`. The capture rules live in `SpotifyPlayback` in BopCore, which `swift test` covers.
 
-For a universal build, install the Rust targets `aarch64-apple-darwin` and `x86_64-apple-darwin`, then use `--stage` in place of `--native`. The build pins spotify-player v0.25.2 with the upstream callback fix, omits integrated audio streaming, and uses upstream's shared Spotify client ID and rate limits. [Upstream callback fix](https://github.com/aome510/spotify-player/pull/1115)
-
-To keep Keychain approval across Debug builds, add a local `Config/LocalSigning.xcconfig` with `CODE_SIGN_STYLE = Manual`, your `DEVELOPMENT_TEAM`, and `BOP_DEBUG_CODE_SIGN_IDENTITY` set to your Apple Development certificate fingerprint from `security find-identity -v -p codesigning`. Git ignores this file. macOS may ask you to approve the existing Spotify Keychain item the first time you change signing identities.
+To sign Debug builds with your own certificate, add a local `Config/LocalSigning.xcconfig` with `CODE_SIGN_STYLE = Manual`, your `DEVELOPMENT_TEAM`, and `BOP_DEBUG_CODE_SIGN_IDENTITY` set to your Apple Development certificate fingerprint from `security find-identity -v -p codesigning`. Git ignores this file.
 
 ## Verify with AirPods and Spotify
 
 1. Complete AirPods setup, play a Spotify track, and confirm the menu bar cue appears when you nod in rhythm with Bop's windows closed.
-2. Connect a Spotify account that's new to Bop, create the **Bop!** playlist, and turn on autosave. Bop twice to one track and once to a second track. Verify that both tracks appear once. Relaunch Bop and confirm **Open Playlist** opens the same playlist.
+2. With Spotify closed, choose **Connect…** and confirm Bop opens Spotify. Quit Spotify, open it normally, and confirm Bop offers **Restart Spotify…** and that Spotify reopens after you confirm. Create the **Bop!** playlist with an account new to Bop, confirm Spotify shows it as private, and turn on autosave. Bop twice to one track and once to a second track. Verify that both tracks appear once. Relaunch Bop and confirm **Open Playlist** opens the same playlist.
 3. Verify paused playback, a Spotify Private Session, demo and recording replays, and AirPods setup practice leave the playlist unchanged.
-4. Disconnect Spotify in Bop and verify that Recent Bops and the local playlist link disappear and further bops leave the Spotify playlist unchanged.
+4. Quit Spotify and bop. Verify the cue says to open Spotify. Relaunch Bop with Spotify closed and confirm it doesn't open Spotify.
+5. Disconnect Spotify in Bop and verify that Recent Bops and the local playlist link disappear and further bops leave the Spotify playlist unchanged.
 
 ## Inspect motion
 
@@ -35,11 +31,5 @@ python3 -m http.server 4300 --bind 127.0.0.1 --directory docs
 ```
 
 To preview the download locally, place `Bop-0.1.0-macOS.zip` in `docs/downloads/`. Git ignores the local archive.
-
-Release builds strip the Spotify helper's linker debug symbols and check each architecture for local build paths before signing. After extracting the distribution ZIP, run the same check with both required architectures.
-
-```sh
-bash Tools/SpotifyPlayer/check-build-paths.sh /path/to/Bop.app/Contents/Helpers/spotify_player arm64 x86_64
-```
 
 GitHub Pages serves `main` from `/docs`. Tag the source used to build the signed and notarized app, then attach the distribution ZIP to that GitHub Release. Verify the landing page downloads the versioned release asset and the privacy notice opens.

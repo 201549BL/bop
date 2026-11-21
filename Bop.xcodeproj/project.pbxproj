@@ -7,17 +7,18 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		039824CD89C011C40A3CA594 /* SpotifyDesktop.swift in Sources */ = {isa = PBXBuildFile; fileRef = C4BBC9A68A3C89DBBFE36EE6 /* SpotifyDesktop.swift */; };
 		0B1766757F583483F6E83A3A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1D1EDD2948E2E4453043E1F8 /* Assets.xcassets */; };
 		0C8D240DAD373DEF90508CB3 /* BopSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE356F3A76A569ECABDD2713 /* BopSession.swift */; };
 		125015331070FA4A5728B401 /* BopApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29BCAEC2F37A60A920047FBA /* BopApp.swift */; };
 		1385DA41A6313BF71EDB29E1 /* BopFeedbackHUD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 696ED6A2D84EFFA6DA40FBB9 /* BopFeedbackHUD.swift */; };
+		17AC2EEAD08FD71A58377021 /* SpotifyAgent.js in Resources */ = {isa = PBXBuildFile; fileRef = 38ADEC1AEC98EAEB902585A2 /* SpotifyAgent.js */; };
 		255FA8CB43B7F45A7649CF1C /* AirPodsMotionSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D5D2567234829945E7C08B8 /* AirPodsMotionSource.swift */; };
 		29D4804F9F3DCEFC639F1C95 /* PracticeBeatButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3817DA7D0B841113ADF0BE4 /* PracticeBeatButton.swift */; };
 		2A8244EED39987AC302E2CE3 /* OnboardingTutorialDark.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = D3E2AF194A84A5D56D0FEBC6 /* OnboardingTutorialDark.mp4 */; };
 		3172444E3CD920FEB067E3C0 /* OnboardingTutorialDarkPoster.png in Resources */ = {isa = PBXBuildFile; fileRef = EE29CEC676D8FD1523CC529C /* OnboardingTutorialDarkPoster.png */; };
 		41C09750949F64AABC842298 /* SpotifySettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0912735CB1F662C8C6C69C4 /* SpotifySettingsView.swift */; };
 		4B41A4D7842DCD54AF27A151 /* BopComparisonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D5297039AD57091E087FF58 /* BopComparisonView.swift */; };
-		625F793B6035F3FFBB323DE5 /* SpotifyKeychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 298579E658AC2EFF9035FCA1 /* SpotifyKeychain.swift */; };
 		73E19C36D4C4A577CD888CC9 /* PracticeBeat.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3369390E4DF82BC63B52A82D /* PracticeBeat.mp3 */; };
 		7E74AF5DFD8938CB132FBC2F /* BobbleheadToy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9BB29420CD51771B9D70038D /* BobbleheadToy.swift */; };
 		7EABD366DE0D532B00179D1A /* OnboardingTutorial.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = 930E09A9FD1C4B15DB446DA7 /* OnboardingTutorial.mp4 */; };
@@ -32,20 +33,18 @@
 		BF828082581CC519FAEF8A48 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 37D9F6684BAC24D3ADA2FEB0 /* LICENSE */; };
 		D4C09A5DA6CEC79718381A3B /* BopSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 65285AFA68E9FB7DEF15952D /* BopSettingsView.swift */; };
 		E4635597B3C3F222AB811AAB /* BopMenuWordmark.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB1451561F05D74B04E7D774 /* BopMenuWordmark.swift */; };
-		EA313EBC8D886C9CF3EED862 /* SpotifyPlayerConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10A79A638AF82D3977651E7E /* SpotifyPlayerConnection.swift */; };
 		EE3960B1EFFD3810FF01AAFE /* DeskBobblehead.usdz in Resources */ = {isa = PBXBuildFile; fileRef = AADE5774F9AAE66D65BBCAB8 /* DeskBobblehead.usdz */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		10A79A638AF82D3977651E7E /* SpotifyPlayerConnection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifyPlayerConnection.swift; sourceTree = "<group>"; };
 		127B99A360F2EA105B33D5AD /* BobbleheadDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BobbleheadDemoView.swift; sourceTree = "<group>"; };
 		1D1EDD2948E2E4453043E1F8 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1D5297039AD57091E087FF58 /* BopComparisonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BopComparisonView.swift; sourceTree = "<group>"; };
 		215FEA178C48DBDC1AC7211F /* bop */ = {isa = PBXFileReference; lastKnownFileType = folder; name = bop; path = .; sourceTree = SOURCE_ROOT; };
-		298579E658AC2EFF9035FCA1 /* SpotifyKeychain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifyKeychain.swift; sourceTree = "<group>"; };
 		29BCAEC2F37A60A920047FBA /* BopApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BopApp.swift; sourceTree = "<group>"; };
 		3369390E4DF82BC63B52A82D /* PracticeBeat.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = PracticeBeat.mp3; sourceTree = "<group>"; };
 		37D9F6684BAC24D3ADA2FEB0 /* LICENSE */ = {isa = PBXFileReference; path = LICENSE; sourceTree = "<group>"; };
+		38ADEC1AEC98EAEB902585A2 /* SpotifyAgent.js */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.javascript; path = SpotifyAgent.js; sourceTree = "<group>"; };
 		3D5D2567234829945E7C08B8 /* AirPodsMotionSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AirPodsMotionSource.swift; sourceTree = "<group>"; };
 		524428BD5C2AA7A8B13DD919 /* SpotifyIntegration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifyIntegration.swift; sourceTree = "<group>"; };
 		65285AFA68E9FB7DEF15952D /* BopSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BopSettingsView.swift; sourceTree = "<group>"; };
@@ -57,6 +56,7 @@
 		AADE5774F9AAE66D65BBCAB8 /* DeskBobblehead.usdz */ = {isa = PBXFileReference; lastKnownFileType = file.usdz; path = DeskBobblehead.usdz; sourceTree = "<group>"; };
 		B3817DA7D0B841113ADF0BE4 /* PracticeBeatButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PracticeBeatButton.swift; sourceTree = "<group>"; };
 		BB1451561F05D74B04E7D774 /* BopMenuWordmark.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BopMenuWordmark.swift; sourceTree = "<group>"; };
+		C4BBC9A68A3C89DBBFE36EE6 /* SpotifyDesktop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpotifyDesktop.swift; sourceTree = "<group>"; };
 		C586DA645C3E9993F8EA9A38 /* BopOnboardingTutorial.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BopOnboardingTutorial.swift; sourceTree = "<group>"; };
 		D3E2AF194A84A5D56D0FEBC6 /* OnboardingTutorialDark.mp4 */ = {isa = PBXFileReference; path = OnboardingTutorialDark.mp4; sourceTree = "<group>"; };
 		D82AC8E1F1A48FCD60B4054B /* BopView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BopView.swift; sourceTree = "<group>"; };
@@ -134,9 +134,8 @@
 		A7C8D8ADE2879B7E9F2C3472 /* Spotify */ = {
 			isa = PBXGroup;
 			children = (
+				C4BBC9A68A3C89DBBFE36EE6 /* SpotifyDesktop.swift */,
 				524428BD5C2AA7A8B13DD919 /* SpotifyIntegration.swift */,
-				298579E658AC2EFF9035FCA1 /* SpotifyKeychain.swift */,
-				10A79A638AF82D3977651E7E /* SpotifyPlayerConnection.swift */,
 				E0912735CB1F662C8C6C69C4 /* SpotifySettingsView.swift */,
 			);
 			path = Spotify;
@@ -160,6 +159,7 @@
 				EE29CEC676D8FD1523CC529C /* OnboardingTutorialDarkPoster.png */,
 				E54F9B3813AC9B414AE9DE03 /* OnboardingTutorialPoster.png */,
 				3369390E4DF82BC63B52A82D /* PracticeBeat.mp3 */,
+				38ADEC1AEC98EAEB902585A2 /* SpotifyAgent.js */,
 			);
 			name = Resources;
 			path = Sources/BopApp/Resources;
@@ -183,7 +183,6 @@
 				6ACFCEC0E537A1CDFA9E6170 /* Sources */,
 				745EC59016294D1332D8A392 /* Resources */,
 				57B4DF945CE57A8552C36517 /* Frameworks */,
-				1838C908FA7397B60CD7715D /* Embed Spotify Player Helper */,
 			);
 			buildRules = (
 			);
@@ -243,34 +242,11 @@
 				3172444E3CD920FEB067E3C0 /* OnboardingTutorialDarkPoster.png in Resources */,
 				82EBF401075FE4666DECB2CE /* OnboardingTutorialPoster.png in Resources */,
 				73E19C36D4C4A577CD888CC9 /* PracticeBeat.mp3 in Resources */,
+				17AC2EEAD08FD71A58377021 /* SpotifyAgent.js in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		1838C908FA7397B60CD7715D /* Embed Spotify Player Helper */ = {
-			isa = PBXShellScriptBuildPhase;
-			alwaysOutOfDate = 1;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = "Embed Spotify Player Helper";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"$(TARGET_BUILD_DIR)/$(CONTENTS_FOLDER_PATH)/Helpers/spotify_player",
-				"$(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/SpotifyPlayer-LICENSE.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "/bin/bash \"$SRCROOT/Tools/SpotifyPlayer/embed.sh\"";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		6ACFCEC0E537A1CDFA9E6170 /* Sources */ = {
@@ -291,9 +267,8 @@
 				9D1BB410C2256AE53455A3D5 /* BopView.swift in Sources */,
 				867649672B3F233CDEEFA616 /* DemoMotion.swift in Sources */,
 				29D4804F9F3DCEFC639F1C95 /* PracticeBeatButton.swift in Sources */,
+				039824CD89C011C40A3CA594 /* SpotifyDesktop.swift in Sources */,
 				B696556CF078DE88A464AD8D /* SpotifyIntegration.swift in Sources */,
-				625F793B6035F3FFBB323DE5 /* SpotifyKeychain.swift in Sources */,
-				EA313EBC8D886C9CF3EED862 /* SpotifyPlayerConnection.swift in Sources */,
 				41C09750949F64AABC842298 /* SpotifySettingsView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

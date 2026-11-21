@@ -5,12 +5,13 @@ struct SpotifySettingsView: View {
 
     @State private var showsDetails = false
     @State private var confirmsDisconnect = false
+    @State private var confirmsRestart = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             BopSettingsGroup {
                 providerRow
-                if spotify.isConnected && showsDetails {
+                if spotify.isEnabled && (showsDetails || !spotify.isConnected) {
                     Divider()
                     details
                 }
@@ -28,16 +29,19 @@ struct SpotifySettingsView: View {
             Button("Cancel", role: .cancel) {}
             Button("Disconnect", role: .destructive) { spotify.disconnect() }
         } message: {
-            Text("Bop stops saving songs and clears the sign-in, recent bops, and saved playlist details from this Mac. Your playlist stays in Spotify.")
+            Text("Bop stops saving songs and clears your recent bops and saved playlist details from this Mac. Your playlist stays in Spotify.")
+        }
+        .alert("Restart Spotify?", isPresented: $confirmsRestart) {
+            Button("Cancel", role: .cancel) {}
+            Button("Restart") { spotify.restartSpotify() }
+        } message: {
+            Text("Spotify quits and opens again, so your music stops briefly.")
         }
         .onChange(of: spotify.isConnected, initial: true) { _, connected in
             showsDetails = connected && spotify.playlistURL == nil
         }
         .onChange(of: spotify.playlistURL) { previousURL, playlistURL in
             if previousURL != nil && playlistURL == nil && spotify.isConnected { showsDetails = true }
-        }
-        .onDisappear {
-            spotify.cancelSignIn()
         }
     }
 
@@ -66,23 +70,25 @@ struct SpotifySettingsView: View {
             BopSettingsRow {
                 providerLabel
             } control: {
-                if spotify.needsKeychainCleanup {
-                    Button("Finish Disconnecting") { spotify.disconnect() }
-                        .accessibilityLabel("Finish disconnecting Spotify")
-                } else if spotify.isConnecting {
-                    HStack(spacing: 8) {
-                        ProgressView()
-                            .controlSize(.small)
-                            .accessibilityHidden(true)
-                        Button("Cancel") { spotify.cancelSignIn() }
-                            .accessibilityLabel("Cancel Spotify sign-in")
-                            .keyboardShortcut(.cancelAction)
-                    }
-                } else if SpotifyPlayerConnection.isAvailable {
+                switch spotify.connection {
+                case .off:
                     Button("Connect…") { spotify.connect() }
                         .buttonStyle(.borderedProminent)
                         .accessibilityLabel("Connect Spotify")
                         .keyboardShortcut(.defaultAction)
+                case .connecting:
+                    ProgressView()
+                        .controlSize(.small)
+                        .accessibilityLabel("Connecting to Spotify")
+                case .spotifyNotRunning:
+                    Button("Open Spotify") { spotify.connect() }
+                case .needsRestart:
+                    Button("Restart Spotify…") { confirmsRestart = true }
+                        .buttonStyle(.borderedProminent)
+                case .failed:
+                    Button("Try Again") { spotify.connect() }
+                case .connected:
+                    EmptyView()
                 }
             }
         }
@@ -103,25 +109,32 @@ struct SpotifySettingsView: View {
     }
 
     private var connectionStatus: String {
-        if spotify.needsKeychainCleanup { return "Disconnect needs attention" }
-        if spotify.isConnecting { return "Waiting for browser approval" }
-        if spotify.isConnected {
-            if spotify.isCreatingPlaylist && !showsDetails { return "Connected · Creating playlist…" }
-            if spotify.playlistURL == nil { return "Connected" }
-            return spotify.autosave ? "Connected · Autosave on" : "Connected · Saving paused"
+        switch spotify.connection {
+        case .off: "Not connected"
+        case .connecting: "Connecting…"
+        case .spotifyNotRunning: "Spotify isn’t open"
+        case .needsRestart: "Spotify needs a restart"
+        case .failed: "Couldn’t connect"
+        case .connected:
+            if spotify.isCreatingPlaylist && !showsDetails { "Connected · Creating playlist…" }
+            else if spotify.playlistURL == nil { "Connected" }
+            else { spotify.autosave ? "Connected · Autosave on" : "Connected · Saving paused" }
         }
-        if !SpotifyPlayerConnection.isAvailable { return "Unavailable in this build" }
-        return "Not connected"
     }
 
     private var connectionNote: String? {
-        if spotify.isConnecting {
-            return "Complete both approvals in your browser using the same Spotify Premium account."
+        switch spotify.connection {
+        case .off:
+            "Bop works with the Spotify app on this Mac and saves the songs you bop to in a private playlist."
+        case .spotifyNotRunning:
+            "Bop saves songs while Spotify is open."
+        case .needsRestart:
+            "Spotify is open without the local connection Bop uses. Restart it from here so Bop can save songs."
+        case .failed(let message):
+            message
+        case .connecting, .connected:
+            nil
         }
-        if !spotify.isConnected && !spotify.needsKeychainCleanup && SpotifyPlayerConnection.isAvailable {
-            return "Connect with Spotify Premium to start saving songs. Anyone with the playlist link can open it."
-        }
-        return nil
     }
 
     private func playlistLink(_ url: URL) -> some View {
@@ -151,7 +164,7 @@ struct SpotifySettingsView: View {
                 .labelsHidden()
                 .toggleStyle(.switch)
             }
-        } else {
+        } else if spotify.isConnected {
             BopSettingsRow {
                 BopSettingsLabel("Bop! playlist")
             } control: {
