@@ -268,7 +268,7 @@ private final class BopMenuBar: NSObject {
     private let isSettingUp: () -> Bool
     private let perform: (Action) -> Void
     private let item = NSStatusBar.system.statusItem(withLength: BopMenuWordmark.width)
-    private let menu = BopMenuPanel()
+    private let menu = BopStatusMenu()
     private let hud = BopFeedbackHUD()
     private let listeningDot = BopListeningDot()
     private var visibilityObservation: NSKeyValueObservation?
@@ -292,12 +292,11 @@ private final class BopMenuBar: NSObject {
         self.perform = perform
         super.init()
 
-        menu.onClose = { [weak self] in self?.item.button?.highlight(false) }
+        menu.willOpen = { [weak self] in self?.prepareMenu() }
+        item.menu = menu.menu
 
         if let button = item.button {
             button.imagePosition = .imageOnly
-            button.target = self
-            button.action = #selector(toggleMenu(_:))
             listeningDot.isHidden = true
             listeningDot.translatesAutoresizingMaskIntoConstraints = false
             button.addSubview(listeningDot)
@@ -322,17 +321,11 @@ private final class BopMenuBar: NSObject {
         observeSession()
     }
 
-    @objc private func toggleMenu(_ sender: NSStatusBarButton) {
-        if menu.isVisible {
-            menu.dismiss()
-            return
-        }
+    private func prepareMenu() {
         hud.dismiss()
         showsRecentBops = false
         spotify.refresh()
         updateMenu(makeMenuContent())
-        menu.show(below: sender)
-        sender.highlight(true)
     }
 
     private func makeMenuContent() -> BopMenuContent {
@@ -398,7 +391,8 @@ private final class BopMenuBar: NSObject {
             },
             perform: { [weak self] action in
                 self?.menu.dismiss()
-                self?.perform(action)
+                // Let the menu finish closing before a window opens or the app quits.
+                DispatchQueue.main.async { self?.perform(action) }
             },
             dismiss: { [weak self] in self?.menu.dismiss() },
             resize: { [weak self] size in self?.resizeMenu(to: size) }
@@ -865,97 +859,46 @@ private struct BopMenuSpotifyRow {
     }
 }
 
-/// A borderless panel that opens under the status item the way menu bar menus do: no arrow and no opening animation.
-private final class BopMenuPanel: NSPanel {
+/// The status item's menu. A real NSMenu, so the system draws the icon highlight, the menu
+/// background, and the placement, and hosts Bop's SwiftUI content as a single item.
+@MainActor
+private final class BopStatusMenu: NSObject, NSMenuDelegate {
     private static let width: CGFloat = 300
-    var onClose: (() -> Void)?
+    let menu = NSMenu()
+    private let contentItem = NSMenuItem()
     private(set) var content: NSViewController?
-    private var monitors: [Any] = []
+    private(set) var isVisible = false
+    var willOpen: (() -> Void)?
 
-    init() {
-        super.init(contentRect: .zero, styleMask: [.borderless, .nonactivatingPanel], backing: .buffered, defer: true)
-        level = .popUpMenu
-        hidesOnDeactivate = false
-        isOpaque = false
-        backgroundColor = .clear
-        // The menu background draws its own rounded shadow. A window shadow outlines the square frame.
-        hasShadow = false
-        animationBehavior = .none
-        collectionBehavior = [.transient, .ignoresCycle, .canJoinAllSpaces]
+    override init() {
+        super.init()
+        menu.delegate = self
+        menu.addItem(contentItem)
     }
-
-    override var canBecomeKey: Bool { true }
 
     func setContent(_ controller: NSViewController) {
-        // The hosting view lives inside the menu material, so it can't be the window's contentViewController.
         content = controller
-        contentView = Self.background(around: controller.view)
         let height = (controller as? NSHostingController<BopMenuContent>)?
-            .sizeThatFits(in: NSSize(width: Self.width, height: .greatestFiniteMagnitude)).height ?? frame.height
-        setContentSize(NSSize(width: Self.width, height: height))
+            .sizeThatFits(in: NSSize(width: Self.width, height: .greatestFiniteMagnitude)).height ?? 0
+        controller.view.frame = NSRect(x: 0, y: 0, width: Self.width, height: height)
+        contentItem.view = controller.view
     }
 
-    /// Liquid Glass with the system menu radius where available, and the menu material before that.
-    private static func background(around view: NSView) -> NSView {
-        if #available(macOS 26, *) {
-            let glass = NSGlassEffectView(frame: NSRect(x: 0, y: 0, width: width, height: 1))
-            glass.autoresizingMask = [.width, .height]
-            glass.cornerRadius = 16
-            view.frame = glass.bounds
-            view.autoresizingMask = [.width, .height]
-            glass.contentView = view
-            return glass
-        }
-        let material = NSVisualEffectView()
-        material.material = .menu
-        material.state = .active
-        material.wantsLayer = true
-        material.layer?.cornerRadius = 10
-        material.layer?.masksToBounds = true
-        view.frame = material.bounds
-        view.autoresizingMask = [.width, .height]
-        material.addSubview(view)
-        return material
-    }
-
-    func show(below button: NSStatusBarButton) {
-        guard let buttonWindow = button.window else { return }
-        let anchor = buttonWindow.convertToScreen(button.convert(button.bounds, to: nil))
-        let visible = (buttonWindow.screen ?? NSScreen.main)?.visibleFrame ?? anchor
-        let x = min(max(anchor.minX, visible.minX + 6), visible.maxX - frame.width - 6)
-        setFrameTopLeftPoint(NSPoint(x: x, y: anchor.minY - 5))
-        makeKeyAndOrderFront(nil)
-        if let view = content?.view { makeFirstResponder(view) }
-
-        let outsideClick: (NSEvent) -> Void = { [weak self] event in
-            guard let self, event.window !== self, event.window !== buttonWindow else { return }
-            self.dismiss()
-        }
-        monitors = [
-            NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown], handler: outsideClick),
-            NSEvent.addLocalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { event in
-                outsideClick(event)
-                return event
-            },
-        ].compactMap { $0 }
-    }
-
-    /// Grows or shrinks from the bottom edge so the top stays under the menu bar.
     func resize(to size: CGSize) {
-        guard frame.size != size else { return }
-        setFrame(NSRect(x: frame.minX, y: frame.maxY - size.height, width: size.width, height: size.height), display: true)
-    }
-
-    override func resignKey() {
-        super.resignKey()
-        dismiss()
+        guard let view = contentItem.view, view.frame.size != size else { return }
+        view.setFrameSize(size)
     }
 
     func dismiss() {
-        guard isVisible else { return }
-        monitors.forEach(NSEvent.removeMonitor)
-        monitors = []
-        orderOut(nil)
-        onClose?()
+        menu.cancelTracking()
+    }
+
+    func menuWillOpen(_ menu: NSMenu) {
+        willOpen?()
+        isVisible = true
+    }
+
+    func menuDidClose(_ menu: NSMenu) {
+        isVisible = false
     }
 }
