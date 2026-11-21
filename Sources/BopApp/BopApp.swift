@@ -875,11 +875,11 @@ private final class BopMenuPanel: NSPanel {
     init() {
         super.init(contentRect: .zero, styleMask: [.borderless, .nonactivatingPanel], backing: .buffered, defer: true)
         level = .popUpMenu
-        isFloatingPanel = true
         hidesOnDeactivate = false
         isOpaque = false
         backgroundColor = .clear
-        hasShadow = true
+        // The menu background draws its own rounded shadow. A window shadow outlines the square frame.
+        hasShadow = false
         animationBehavior = .none
         collectionBehavior = [.transient, .ignoresCycle, .canJoinAllSpaces]
     }
@@ -887,21 +887,35 @@ private final class BopMenuPanel: NSPanel {
     override var canBecomeKey: Bool { true }
 
     func setContent(_ controller: NSViewController) {
-        let background = NSVisualEffectView()
-        background.material = .menu
-        background.state = .active
-        background.wantsLayer = true
-        background.layer?.cornerRadius = 10
-        background.layer?.masksToBounds = true
-        controller.view.frame = background.bounds
-        controller.view.autoresizingMask = [.width, .height]
-        background.addSubview(controller.view)
         // The hosting view lives inside the menu material, so it can't be the window's contentViewController.
         content = controller
-        contentView = background
+        contentView = Self.background(around: controller.view)
         let height = (controller as? NSHostingController<BopMenuContent>)?
             .sizeThatFits(in: NSSize(width: Self.width, height: .greatestFiniteMagnitude)).height ?? frame.height
         setContentSize(NSSize(width: Self.width, height: height))
+    }
+
+    /// Liquid Glass with the system menu radius where available, and the menu material before that.
+    private static func background(around view: NSView) -> NSView {
+        if #available(macOS 26, *) {
+            let glass = NSGlassEffectView(frame: NSRect(x: 0, y: 0, width: width, height: 1))
+            glass.autoresizingMask = [.width, .height]
+            glass.cornerRadius = 16
+            view.frame = glass.bounds
+            view.autoresizingMask = [.width, .height]
+            glass.contentView = view
+            return glass
+        }
+        let material = NSVisualEffectView()
+        material.material = .menu
+        material.state = .active
+        material.wantsLayer = true
+        material.layer?.cornerRadius = 10
+        material.layer?.masksToBounds = true
+        view.frame = material.bounds
+        view.autoresizingMask = [.width, .height]
+        material.addSubview(view)
+        return material
     }
 
     func show(below button: NSStatusBarButton) {
@@ -909,7 +923,7 @@ private final class BopMenuPanel: NSPanel {
         let anchor = buttonWindow.convertToScreen(button.convert(button.bounds, to: nil))
         let visible = (buttonWindow.screen ?? NSScreen.main)?.visibleFrame ?? anchor
         let x = min(max(anchor.minX, visible.minX + 6), visible.maxX - frame.width - 6)
-        setFrameTopLeftPoint(NSPoint(x: x, y: anchor.minY - 1))
+        setFrameTopLeftPoint(NSPoint(x: x, y: anchor.minY - 5))
         makeKeyAndOrderFront(nil)
         if let view = content?.view { makeFirstResponder(view) }
 
