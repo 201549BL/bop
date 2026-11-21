@@ -125,7 +125,7 @@ struct SpotifySettingsView: View {
     private var connectionNote: String? {
         switch spotify.connection {
         case .off:
-            "Bop works with the Spotify app on this Mac and saves the songs you bop to in a private playlist."
+            "Bop works with the Spotify app on this Mac and saves the songs you bop to in a playlist it creates as private."
         case .spotifyNotRunning:
             "Bop saves songs while Spotify is open."
         case .needsRestart:

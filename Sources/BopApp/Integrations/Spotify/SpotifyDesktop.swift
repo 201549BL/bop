@@ -31,7 +31,7 @@ final class SpotifyDesktop {
     enum Failure: Error, Equatable, LocalizedError {
         case notInstalled, notRunning, missingDebugPort, launchFailed, quitFailed, loading
         case changed, rejected, timedOut
-        case playlistUnavailable, playlistMissing, playlistVisible
+        case playlistUnavailable, playlistMissing
 
         var errorDescription: String? {
             switch self {
@@ -46,7 +46,6 @@ final class SpotifyDesktop {
             case .timedOut: "Spotify took too long to respond."
             case .playlistUnavailable: "Bop couldn’t verify that it can write to your playlist."
             case .playlistMissing: "Spotify couldn’t find your playlist."
-            case .playlistVisible: "Spotify didn’t confirm that your playlist is private. Check its visibility in Spotify, then try again."
             }
         }
     }
@@ -170,16 +169,7 @@ final class SpotifyDesktop {
     }
 
     func validatePlaylist(_ id: String) async throws {
-        // Spotify can take a moment to report a visibility change it just made.
-        var attempts = 0
-        while true {
-            do {
-                return try await requireWritablePlaylist(id)
-            } catch Failure.playlistVisible where attempts < 10 {
-                attempts += 1
-                try await Task.sleep(for: .milliseconds(200))
-            }
-        }
+        try await requireWritablePlaylist(id)
     }
 
     func save(trackURI: String, playlistID: String) async throws -> SaveResult {
@@ -220,11 +210,8 @@ final class SpotifyDesktop {
             """)
         guard try reply.contains.get() == [true], let metadata = reply.metadata else { throw Failure.playlistMissing }
         let playlist = try metadata.get()
-        // A playlist keeps its verified ID after the user changes its name or description.
-        guard playlist.id == id, playlist.isOwnedBySelf == true, !playlist.isCollaborative else {
-            throw Failure.playlistUnavailable
-        }
-        guard playlist.isPrivate else { throw Failure.playlistVisible }
+        // The user may rename, share, or open up the playlist later. Bop only needs to own it.
+        guard playlist.id == id, playlist.isOwnedBySelf == true else { throw Failure.playlistUnavailable }
     }
 
     private nonisolated static func playlistID(fromURI uri: String) -> String? {
@@ -433,17 +420,11 @@ final class SpotifyDesktop {
 
     /// A rootlist entry or playlist metadata. Folders, and the rootlist itself, nest entries under `items`.
     private struct Playlist: Decodable {
-        struct Permissions: Decodable { let isPrivate: Bool }
-        struct Collaborators: Decodable { let count: Int }
-
         let type: String
         let uri: String?
         let name: String?
         let description: String?
         let isOwnedBySelf: Bool?
-        let isPublished: Bool?
-        let permissions: Permissions?
-        let collaborators: Collaborators?
         let items: [Playlist]?
 
         var id: String? { uri.flatMap(SpotifyDesktop.playlistID(fromURI:)) }
@@ -456,11 +437,6 @@ final class SpotifyDesktop {
             isOwnedBySelf == true && SpotifyDesktop.managedPlaylistNames.contains(name ?? "")
                 && description == SpotifyDesktop.playlistDescription
         }
-
-        // Spotify lists the owner among the collaborators.
-        var isCollaborative: Bool { (collaborators?.count ?? 0) > 1 }
-        // Only the owner can open it, and it isn't shown on their profile.
-        var isPrivate: Bool { permissions?.isPrivate == true && isPublished == false }
     }
 
     private struct Contents: Decodable {
