@@ -406,7 +406,7 @@ private final class BopMenuBar: NSObject {
     }
 
     private func updateMenu(_ content: BopMenuContent) {
-        if menu.isVisible, let controller = menu.contentViewController as? NSHostingController<BopMenuContent> {
+        if menu.isVisible, let controller = menu.content as? NSHostingController<BopMenuContent> {
             controller.rootView = content
             return
         }
@@ -869,6 +869,7 @@ private struct BopMenuSpotifyRow {
 private final class BopMenuPanel: NSPanel {
     private static let width: CGFloat = 300
     var onClose: (() -> Void)?
+    private(set) var content: NSViewController?
     private var monitors: [Any] = []
 
     init() {
@@ -895,7 +896,8 @@ private final class BopMenuPanel: NSPanel {
         controller.view.frame = background.bounds
         controller.view.autoresizingMask = [.width, .height]
         background.addSubview(controller.view)
-        contentViewController = controller
+        // The hosting view lives inside the menu material, so it can't be the window's contentViewController.
+        content = controller
         contentView = background
         let height = (controller as? NSHostingController<BopMenuContent>)?
             .sizeThatFits(in: NSSize(width: Self.width, height: .greatestFiniteMagnitude)).height ?? frame.height
@@ -909,7 +911,7 @@ private final class BopMenuPanel: NSPanel {
         let x = min(max(anchor.minX, visible.minX + 6), visible.maxX - frame.width - 6)
         setFrameTopLeftPoint(NSPoint(x: x, y: anchor.minY - 1))
         makeKeyAndOrderFront(nil)
-        if let view = contentViewController?.view { makeFirstResponder(view) }
+        if let view = content?.view { makeFirstResponder(view) }
 
         let outsideClick: (NSEvent) -> Void = { [weak self] event in
             guard let self, event.window !== self, event.window !== buttonWindow else { return }
