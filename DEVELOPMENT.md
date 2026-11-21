@@ -30,6 +30,6 @@ Serve the static site from `docs/` on a free local port. The example uses port 4
 python3 -m http.server 4300 --bind 127.0.0.1 --directory docs
 ```
 
-To preview the download locally, place `Bop-0.1.0-macOS.zip` in `docs/downloads/`. Git ignores the local archive.
+To preview the download locally, place `Bop-0.2.0-macOS.zip` in `docs/downloads/`. Git ignores the local archive.
 
 GitHub Pages serves `main` from `/docs`. Tag the source used to build the signed and notarized app, then attach the distribution ZIP to that GitHub Release. Verify the landing page downloads the versioned release asset and the privacy notice opens.

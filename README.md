@@ -2,7 +2,7 @@
 
 Bop is a macOS menu bar app that uses your AirPods to detect when you nod to music and can save those songs to a Spotify playlist.
 
-[Download for Mac](https://github.com/201549BL/bop/releases/download/v0.1.0/Bop-0.1.0-macOS.zip) · [Homepage and demo](https://201549bl.github.io/bop/)
+[Download for Mac](https://github.com/201549BL/bop/releases/download/v0.2.0/Bop-0.2.0-macOS.zip) · [Homepage and demo](https://201549bl.github.io/bop/)
 
 Requires macOS 14 or later and AirPods with motion support. Song saving also needs the Spotify app for Mac.
 
