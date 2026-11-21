@@ -60,6 +60,7 @@ final class SpotifyIntegration {
     private var playlistCreationTask: Task<Void, Never>?
 
     @ObservationIgnored private var connectTask: Task<Void, Never>?
+    @ObservationIgnored private var setsUpSavingOnConnect = false
     @ObservationIgnored private var captureTasks: [UUID: Task<Void, Never>] = [:]
     @ObservationIgnored private var pendingTracks: [PendingTrack] = []
     @ObservationIgnored private var writingTrack: PendingTrack?
@@ -76,7 +77,9 @@ final class SpotifyIntegration {
     }
 
     /// Turns Spotify on, opening the app with its debugging port when it isn't running.
+    /// Turning it on finds or creates the playlist and starts saving songs.
     func connect() {
+        if connection == .off { setsUpSavingOnConnect = true }
         defaults.set(true, forKey: Self.enabledKey)
         if desktop == nil { desktop = SpotifyDesktop() }
         startConnecting { try await $0.launch() }
@@ -120,6 +123,9 @@ final class SpotifyIntegration {
     private func connected(_ account: String) {
         connection = .connected(accountID: account)
         if account != accountID { load(account) }
+        guard setsUpSavingOnConnect else { return }
+        setsUpSavingOnConnect = false
+        if playlistURL == nil { createPlaylist() } else { setAutosave(true) }
     }
 
     /// Moves to the state an unreachable Spotify implies. Returns false for other failures.
@@ -175,6 +181,7 @@ final class SpotifyIntegration {
                 guard self.desktop === desktop, self.accountID == accountID else { return }
                 self.playlistPreferences[accountID] = ["id": id, "ready": "true"]
                 self.playlistURL = url
+                self.setAutosave(true)
             } catch {
                 guard !Task.isCancelled, self.desktop === desktop else { return }
                 _ = self.noteUnreachable(error)
@@ -188,6 +195,7 @@ final class SpotifyIntegration {
     }
 
     private func stopConnectionWork() {
+        setsUpSavingOnConnect = false
         connectTask?.cancel()
         connectTask = nil
         cancelPlaylistCreation()

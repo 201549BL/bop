@@ -12,7 +12,7 @@ Requires macOS 14 or later and AirPods with motion support. Song saving also nee
 2. Open Bop, follow the AirPods setup, and allow motion access when macOS asks.
 3. Use **BOP!** in the menu bar to start or pause listening.
 
-For optional song saving, sign in to the Spotify app, choose **Connect…** under Spotify in Bop's settings, then **Create playlist**, and turn on **Autosave to playlist**. New playlists are named **Bop!** and start out private. You can share them in Spotify later. Bop opens Spotify with a local connection it uses to read what's playing. If Spotify is already open without it, Bop offers to restart Spotify, which stops your music briefly.
+For optional song saving, sign in to the Spotify app, choose **Connect…** under Spotify in Bop's settings. Bop finds the playlist it made before, or creates one, and starts saving songs. You can pause saving with **Autosave to playlist**. New playlists are named **Bop!** and start out private. You can share them in Spotify later. Bop opens Spotify with a local connection it uses to read what's playing. If Spotify is already open without it, Bop offers to restart Spotify, which stops your music briefly.
 
 AirPods motion is processed on your Mac. [Privacy notice](https://201549bl.github.io/bop/privacy.html)
 
