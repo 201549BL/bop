@@ -81,7 +81,7 @@ struct BopOnboardingTutorial: View {
 
     private var nodProgress: some View {
         HStack(spacing: 7) {
-            ForEach(0..<TutorialPhase.sent.nodCount) { index in
+            ForEach(0..<TutorialPhase.sent.nodCount, id: \.self) { index in
                 Circle()
                     .fill(index < phase.nodCount ? palette.foreground : palette.inactive)
                     .frame(width: 8, height: 8)
