@@ -82,16 +82,26 @@ final class SpotifyIntegration {
         startConnecting { try await $0.launch() }
     }
 
+    /// Rechecks Spotify without opening it or showing progress, so the menu reflects its current state.
+    func refresh() {
+        guard connectTask == nil else { return }
+        startConnecting(showsProgress: false) { try await $0.accountID() }
+    }
+
     /// Quits and reopens Spotify with its debugging port. Only the user's click should get here.
     func restartSpotify() {
         guard connection == .needsRestart else { return }
         startConnecting { try await $0.restart() }
     }
 
-    private func startConnecting(_ operation: @escaping @MainActor (SpotifyDesktop) async throws -> String) {
+    private func startConnecting(
+        showsProgress: Bool = true, _ operation: @escaping @MainActor (SpotifyDesktop) async throws -> String
+    ) {
         guard let desktop, connection != .connecting else { return }
-        connection = .connecting
-        status = nil
+        if showsProgress {
+            connection = .connecting
+            status = nil
+        }
         connectTask = Task { [weak self] in
             defer {
                 if self?.desktop === desktop { self?.connectTask = nil }

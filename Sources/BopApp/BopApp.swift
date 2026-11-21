@@ -237,6 +237,8 @@ final class BopAppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             NSWorkspace.shared.open(url)
         case .openBopPlaylist:
             if let url = spotify.playlistURL { NSWorkspace.shared.open(url) }
+        case .openSpotify:
+            spotify.connect()
         case .quit:
             NSApp.terminate(nil)
         }
@@ -246,7 +248,7 @@ final class BopAppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 @MainActor
 private final class BopMenuBar: NSObject, NSPopoverDelegate {
     enum Action {
-        case toggleListening, showSettings, showMusicSettings, openBopPlaylist, openTrack(URL), quit
+        case toggleListening, showSettings, showMusicSettings, openSpotify, openBopPlaylist, openTrack(URL), quit
     }
 
     private enum Cue {
@@ -328,6 +330,7 @@ private final class BopMenuBar: NSObject, NSPopoverDelegate {
         }
         hud.dismiss()
         showsRecentBops = false
+        spotify.refresh()
         updateMenu(makeMenuContent())
         popover.show(relativeTo: sender.bounds, of: sender, preferredEdge: .minY)
         if let view = popover.contentViewController?.view, let window = view.window {
@@ -340,7 +343,16 @@ private final class BopMenuBar: NSObject, NSPopoverDelegate {
     private func makeMenuContent() -> BopMenuContent {
         let hasPlaylist = spotify.playlistURL != nil
         let hasAutosave = spotify.autosave
-        let autosaveStatus = hasPlaylist ? (hasAutosave ? "Spotify autosave on" : "Spotify autosave off") : nil
+        let spotifyRow = BopMenuSpotifyRow(spotify.connection)
+        let autosaveStatus: String? = if spotify.connection == .connecting {
+            "Connecting to Spotify…"
+        } else if hasAutosave, let spotifyRow {
+            spotifyRow.saveBlocker
+        } else if hasPlaylist {
+            hasAutosave ? "Spotify autosave on" : "Spotify autosave off"
+        } else {
+            nil
+        }
 
         let actionTitle: String
         let symbol: String
@@ -360,7 +372,7 @@ private final class BopMenuBar: NSObject, NSPopoverDelegate {
             case .waiting, .disconnected, nil: "Waiting for AirPods"
             default: session.status
             }
-            if isListening, hasPlaylist, hasAutosave { detail = "Saving songs to Spotify" }
+            if isListening, hasPlaylist, hasAutosave, spotify.isConnected { detail = "Saving songs to Spotify" }
         } else if session.isReplaying {
             actionTitle = "Stop Replay"
             symbol = "stop"
@@ -380,6 +392,7 @@ private final class BopMenuBar: NSObject, NSPopoverDelegate {
             tracks: spotify.recentBops,
             lastResult: lastBopDetail.map { $0 == Self.bopDetected ? $0 : "Last bop · \($0)" },
             providerConnected: spotify.isEnabled,
+            spotifyRow: spotifyRow,
             autosaveEnabled: hasAutosave,
             playlistAvailable: hasPlaylist,
             isExpanded: showsRecentBops,
@@ -571,7 +584,7 @@ private struct BopMenuStatusHeader: View {
 
 private struct BopMenuContent: View {
     private enum Row: Hashable {
-        case listening, musicSetup, recentBops, track(String), playlist, settings, quit
+        case listening, musicSetup, spotify, recentBops, track(String), playlist, settings, quit
     }
 
     let status: BopMenuStatusHeader
@@ -580,6 +593,7 @@ private struct BopMenuContent: View {
     let tracks: [SpotifyIntegration.RecentBop]
     let lastResult: String?
     let providerConnected: Bool
+    let spotifyRow: BopMenuSpotifyRow?
     let autosaveEnabled: Bool
     let playlistAvailable: Bool
     let isExpanded: Bool
@@ -598,6 +612,11 @@ private struct BopMenuContent: View {
             menuRow(.listening, listeningTitle, symbol: listeningSymbol) { perform(.toggleListening) }
             divider
             if providerConnected {
+                if let spotifyRow {
+                    menuRow(.spotify, spotifyRow.title, symbol: spotifyRow.symbol, detail: spotifyRow.detail) {
+                        perform(spotifyRow.action)
+                    }
+                }
                 menuRow(.recentBops, "Recent Bops", symbol: "clock", action: toggleRecentBops) {
                     Image(systemName: "chevron.right")
                         .font(.system(size: 9, weight: .semibold))
@@ -757,7 +776,13 @@ private struct BopMenuContent: View {
 
     private func moveFocus(_ direction: MoveCommandDirection) {
         guard direction == .up || direction == .down else { return }
-        var rows: [Row] = [.listening, providerConnected ? .recentBops : .musicSetup]
+        var rows: [Row] = [.listening]
+        if providerConnected {
+            if spotifyRow != nil { rows.append(.spotify) }
+            rows.append(.recentBops)
+        } else {
+            rows.append(.musicSetup)
+        }
         if providerConnected, isExpanded {
             rows.append(contentsOf: linkedTracks.map { .track($0.track.uri) })
             if linkedTracks.isEmpty, !autosaveEnabled { rows.append(.musicSetup) }
@@ -817,5 +842,39 @@ extension NSWindow {
             }
         }
         return true
+    }
+}
+
+/// The menu row that tells the user what Spotify needs before Bop can save songs.
+private struct BopMenuSpotifyRow {
+    let title: String
+    let detail: String
+    let symbol: String
+    let saveBlocker: String
+    let action: BopMenuBar.Action
+
+    init?(_ connection: SpotifyIntegration.Connection) {
+        switch connection {
+        case .spotifyNotRunning:
+            title = "Open Spotify"
+            detail = "Bop saves songs while Spotify is open"
+            symbol = "arrow.up.forward.app"
+            saveBlocker = "Open Spotify to save songs"
+            action = .openSpotify
+        case .needsRestart:
+            title = "Restart Spotify…"
+            detail = "Spotify is open without Bop’s connection"
+            symbol = "arrow.clockwise"
+            saveBlocker = "Restart Spotify to save songs"
+            action = .showMusicSettings
+        case .failed(let message):
+            title = "Spotify Needs Attention…"
+            detail = message
+            symbol = "exclamationmark.triangle"
+            saveBlocker = "Spotify isn’t saving songs"
+            action = .showMusicSettings
+        case .off, .connecting, .connected:
+            return nil
+        }
     }
 }
