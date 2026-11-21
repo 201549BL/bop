@@ -1,20 +1,6 @@
+import BopCore
 import Darwin
 import Foundation
-
-struct SpotifyBoppedTrack: Codable, Equatable {
-    fileprivate static let uriPrefix = "spotify:track:"
-
-    let uri: String
-    let title: String?
-    let artist: String?
-
-    var url: URL? {
-        guard uri.hasPrefix(Self.uriPrefix) else { return nil }
-        let id = uri.dropFirst(Self.uriPrefix.count)
-        guard SpotifyPlayerConnection.isSpotifyID(id) else { return nil }
-        return URL(string: "https://open.spotify.com/track/\(id)")
-    }
-}
 
 @MainActor
 final class SpotifyPlayerConnection {
@@ -455,7 +441,7 @@ final class SpotifyPlayerConnection {
         return name
     }
 
-    fileprivate nonisolated static func isSpotifyID(_ id: some StringProtocol) -> Bool {
+    private static func isSpotifyID(_ id: some StringProtocol) -> Bool {
         (1...64).contains(id.utf8.count) && id.utf8.allSatisfy {
             (48...57).contains($0) || (65...90).contains($0) || (97...122).contains($0)
         }

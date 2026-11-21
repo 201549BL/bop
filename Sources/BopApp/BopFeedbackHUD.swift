@@ -1,4 +1,5 @@
 import AppKit
+import BopCore
 import SwiftUI
 
 @MainActor
