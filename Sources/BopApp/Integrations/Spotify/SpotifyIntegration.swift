@@ -10,6 +10,17 @@ final class SpotifyIntegration {
         case result(String)
     }
 
+    /// How Bop stands with the Spotify app on this Mac.
+    enum Connection: Equatable {
+        case off
+        case connecting
+        case spotifyNotRunning
+        /// Spotify is running without the debugging port, and only the user may interrupt it.
+        case needsRestart
+        case connected(accountID: String)
+        case failed(String)
+    }
+
     struct RecentBop: Codable {
         let track: SpotifyBoppedTrack
         let detectedAt: Date
@@ -25,27 +36,30 @@ final class SpotifyIntegration {
         var event: Int
     }
 
+    private static let enabledKey = "spotifyEnabled"
+    private static let accountKey = "spotifyAccount"
     private static let playlistsKey = "spotifyPlayerPlaylists"
     private static let autosaveKey = "spotifyPlayerAutosave"
-    private static let disconnectPendingKey = "spotifyPlayerDisconnectPending"
     private static let recentHistoryKey = "spotifyRecentBops"
     private static let recentLimit = 5
 
     private let defaults = UserDefaults.standard
-    private var connection: (client: SpotifyPlayerConnection, accountID: String)?
-    private var pendingConnection: SpotifyPlayerConnection?
+    /// Present while Spotify is turned on in Bop. Work started with an older instance is stale.
+    private var desktop: SpotifyDesktop?
+    /// The account whose playlist and recent bops are loaded. Bop remembers it while Spotify is closed.
+    private var accountID: String?
 
-    var isConnected: Bool { connection != nil }
-    var isConnecting: Bool { pendingConnection != nil }
+    private(set) var connection = Connection.off
+    var isEnabled: Bool { connection != .off }
+    var isConnected: Bool { if case .connected = connection { true } else { false } }
     var isCreatingPlaylist: Bool { playlistCreationTask != nil }
-    private(set) var needsKeychainCleanup = false
     private(set) var autosave = false
     private(set) var status: String?
     private(set) var playlistURL: URL?
     private(set) var recentBops: [RecentBop] = []
     private var playlistCreationTask: Task<Void, Never>?
 
-    @ObservationIgnored private var signInTask: Task<Void, Never>?
+    @ObservationIgnored private var connectTask: Task<Void, Never>?
     @ObservationIgnored private var captureTasks: [UUID: Task<Void, Never>] = [:]
     @ObservationIgnored private var pendingTracks: [PendingTrack] = []
     @ObservationIgnored private var writingTrack: PendingTrack?
@@ -53,107 +67,110 @@ final class SpotifyIntegration {
     @ObservationIgnored private var latestCaptureEvent: Int?
     @ObservationIgnored var onBopUpdate: ((Int, BopUpdate) -> Void)?
 
+    /// Checks on Spotify without opening it, since the user may have closed it on purpose.
     func restore() {
-        if defaults.bool(forKey: Self.disconnectPendingKey) {
-            clearSavedSpotifyData()
-            needsKeychainCleanup = true
-            status = "Finish removing the Spotify sign-in from Keychain."
-            return
-        }
-        guard SpotifyPlayerConnection.isAvailable else { return }
-        let candidate = SpotifyPlayerConnection()
-        do {
-            guard let accountID = try candidate.restore() else {
-                clearSavedSpotifyData()
-                return
-            }
-            activate(candidate, accountID: accountID)
-        } catch {
-            status = error.localizedDescription
-        }
+        guard defaults.bool(forKey: Self.enabledKey) else { return }
+        desktop = SpotifyDesktop()
+        if let account = defaults.string(forKey: Self.accountKey) { load(account) }
+        startConnecting { try await $0.accountID() }
     }
 
+    /// Turns Spotify on, opening the app with its debugging port when it isn't running.
     func connect() {
-        guard SpotifyPlayerConnection.isAvailable, !isConnected, !isConnecting, !needsKeychainCleanup else {
-            return
-        }
+        defaults.set(true, forKey: Self.enabledKey)
+        if desktop == nil { desktop = SpotifyDesktop() }
+        startConnecting { try await $0.launch() }
+    }
 
+    /// Quits and reopens Spotify with its debugging port. Only the user's click should get here.
+    func restartSpotify() {
+        guard connection == .needsRestart else { return }
+        startConnecting { try await $0.restart() }
+    }
+
+    private func startConnecting(_ operation: @escaping @MainActor (SpotifyDesktop) async throws -> String) {
+        guard let desktop, connection != .connecting else { return }
+        connection = .connecting
         status = nil
-        let candidate = SpotifyPlayerConnection()
-        pendingConnection = candidate
-        signInTask = Task { [weak self] in
+        connectTask = Task { [weak self] in
             defer {
-                if self?.connection?.client !== candidate { candidate.invalidate() }
-                if self?.pendingConnection === candidate {
-                    self?.pendingConnection = nil
-                    self?.signInTask = nil
-                }
+                if self?.desktop === desktop { self?.connectTask = nil }
             }
             do {
-                let accountID = try await candidate.connect()
-                guard let self, self.pendingConnection === candidate else { return }
-                self.activate(candidate, accountID: accountID)
+                let account = try await operation(desktop)
+                guard let self, self.desktop === desktop else { return }
+                self.connected(account)
             } catch {
-                guard !Task.isCancelled, let self, self.pendingConnection === candidate else { return }
-                self.status = error.localizedDescription
+                guard !Task.isCancelled, let self, self.desktop === desktop else { return }
+                if !self.noteUnreachable(error) { self.connection = .failed(error.localizedDescription) }
             }
         }
     }
 
-    private func activate(_ client: SpotifyPlayerConnection, accountID: String) {
-        connection = (client, accountID)
+    private func connected(_ account: String) {
+        connection = .connected(accountID: account)
+        if account != accountID { load(account) }
+    }
+
+    /// Moves to the state an unreachable Spotify implies. Returns false for other failures.
+    private func noteUnreachable(_ error: any Error) -> Bool {
+        switch error as? SpotifyDesktop.Failure {
+        case .notRunning: connection = .spotifyNotRunning
+        case .missingDebugPort: connection = .needsRestart
+        case .notInstalled: connection = .failed(error.localizedDescription)
+        default: return false
+        }
+        return true
+    }
+
+    private func load(_ account: String) {
+        cancelPendingSaves()
+        accountID = account
+        defaults.set(account, forKey: Self.accountKey)
         if let data = defaults.data(forKey: Self.recentHistoryKey),
            let history = try? PropertyListDecoder().decode(RecentHistory.self, from: data),
-           history.accountID == accountID {
+           history.accountID == account {
             recentBops = history.bops
         } else {
             recentBops = []
             defaults.removeObject(forKey: Self.recentHistoryKey)
         }
-        let preference = playlistPreferences[accountID]
+        let preference = playlistPreferences[account]
         if let preference {
-            playlistPreferences = [accountID: preference]
+            playlistPreferences = [account: preference]
         } else {
             defaults.removeObject(forKey: Self.playlistsKey)
         }
         playlistURL = preference?["ready"] == "true"
-            ? preference?["id"].flatMap(SpotifyPlayerConnection.playlistURL(for:))
+            ? preference?["id"].flatMap(SpotifyDesktop.playlistURL(for:))
             : nil
-        autosave = playlistURL != nil && defaults.string(forKey: Self.autosaveKey) == accountID
+        autosave = playlistURL != nil && defaults.string(forKey: Self.autosaveKey) == account
         if !autosave {
             defaults.removeObject(forKey: Self.autosaveKey)
         }
     }
 
     func createPlaylist() {
-        guard let connection, playlistURL == nil, playlistCreationTask == nil else { return }
-        let client = connection.client
-        let accountID = connection.accountID
+        guard let desktop, case let .connected(accountID) = connection, accountID == self.accountID,
+              playlistURL == nil, playlistCreationTask == nil else { return }
         status = nil
         playlistCreationTask = Task { [weak self] in
             guard let self else { return }
             defer {
-                if self.connection?.client === client { self.playlistCreationTask = nil }
+                if self.desktop === desktop { self.playlistCreationTask = nil }
             }
             do {
-                let (id, url) = try await self.preparePlaylist(using: client, accountID: accountID)
+                let (id, url) = try await self.preparePlaylist(using: desktop, accountID: accountID)
                 try Task.checkCancellation()
-                guard self.connection?.client === client else { return }
+                guard self.desktop === desktop, self.accountID == accountID else { return }
                 self.playlistPreferences[accountID] = ["id": id, "ready": "true"]
                 self.playlistURL = url
             } catch {
-                guard !Task.isCancelled, self.connection?.client === client else { return }
-                if (error as? SpotifyPlayerConnection.Failure) == .reauthorizationRequired {
-                    self.disconnect(captureError: error.localizedDescription)
-                } else {
-                    self.status = error.localizedDescription
-                }
+                guard !Task.isCancelled, self.desktop === desktop else { return }
+                _ = self.noteUnreachable(error)
+                self.status = error.localizedDescription
             }
         }
-    }
-
-    func cancelSignIn() {
-        signInTask?.cancel()
     }
 
     func shutdown() {
@@ -161,53 +178,35 @@ final class SpotifyIntegration {
     }
 
     private func stopConnectionWork() {
-        cancelSignIn()
+        connectTask?.cancel()
+        connectTask = nil
         cancelPlaylistCreation()
         cancelPendingSaves()
-        pendingConnection?.invalidate()
-        pendingConnection = nil
-        signInTask = nil
-        connection?.client.invalidate()
     }
 
+    /// Turns Spotify off in Bop and forgets its playlist and recent bops. Spotify keeps running.
     func disconnect() {
-        disconnect(captureError: nil)
-    }
-
-    private func disconnect(captureError: String?) {
-        defaults.set(true, forKey: Self.disconnectPendingKey)
         let interruptedEvent = latestCaptureEvent
         stopConnectionWork()
-        connection = nil
+        desktop = nil
+        accountID = nil
+        connection = .off
         autosave = false
         playlistURL = nil
         recentBops = []
         status = nil
-        clearSavedSpotifyData()
-        do {
-            try SpotifyKeychain.deletePlayerSession()
-            defaults.removeObject(forKey: Self.disconnectPendingKey)
-            needsKeychainCleanup = false
-        } catch {
-            needsKeychainCleanup = true
-            status = error.localizedDescription
+        for key in [Self.enabledKey, Self.accountKey, Self.playlistsKey, Self.autosaveKey, Self.recentHistoryKey] {
+            defaults.removeObject(forKey: key)
         }
-        if status == nil { status = captureError }
         if let interruptedEvent {
-            onBopUpdate?(interruptedEvent, .result(status ?? "Spotify disconnected"))
+            onBopUpdate?(interruptedEvent, .result("Spotify disconnected"))
         }
-    }
-
-    private func clearSavedSpotifyData() {
-        defaults.removeObject(forKey: Self.playlistsKey)
-        defaults.removeObject(forKey: Self.autosaveKey)
-        defaults.removeObject(forKey: Self.recentHistoryKey)
     }
 
     func setAutosave(_ enabled: Bool) {
-        guard let connection, !enabled || playlistURL != nil else { return }
+        guard let accountID, !enabled || playlistURL != nil else { return }
         autosave = enabled
-        defaults.set(enabled ? connection.accountID : nil, forKey: Self.autosaveKey)
+        defaults.set(enabled ? accountID : nil, forKey: Self.autosaveKey)
         status = nil
         if !enabled {
             let interruptedEvent = latestCaptureEvent
@@ -225,10 +224,9 @@ final class SpotifyIntegration {
         latestCaptureEvent = nil
     }
 
+    /// Reads Spotify even when Bop last saw it closed, so a bop is the moment Bop notices it reopened.
     func captureBop(at detectedAt: Date, event: Int) {
-        guard autosave, playlistURL != nil, let connection else { return }
-        let client = connection.client
-        let accountID = connection.accountID
+        guard autosave, playlistURL != nil, let desktop, let accountID else { return }
 
         latestCaptureEvent = event
         status = nil
@@ -240,10 +238,23 @@ final class SpotifyIntegration {
         captureTasks[id] = Task { [weak self] in
             defer { self?.captureTasks.removeValue(forKey: id) }
             do {
-                let track = try await client.playing(detectedAt: detectedAt)
+                let capture = try await desktop.playing(detectedAt: detectedAt)
                 try Task.checkCancellation()
-                guard let self, self.isCurrent(client) else { return }
-                if let track {
+                guard let self, self.isCurrent(desktop) else { return }
+                guard let capture else {
+                    self.publishBopResult("No active Spotify track captured", event: event)
+                    return
+                }
+                guard capture.accountID == accountID else {
+                    self.publishBopResult(
+                        "Spotify is signed in to a different account. Set up its playlist in Bop’s settings.",
+                        event: event
+                    )
+                    self.connected(capture.accountID)
+                    return
+                }
+                if !self.isConnected { self.connected(accountID) }
+                if let track = capture.track {
                     if event == self.latestCaptureEvent { self.onBopUpdate?(event, .trackCaptured(track)) }
                     self.recordBop(track, detectedAt: detectedAt, accountID: accountID)
                     self.enqueue(PendingTrack(uri: track.uri, event: event))
@@ -251,7 +262,7 @@ final class SpotifyIntegration {
                     self.publishBopResult("No active Spotify track captured", event: event)
                 }
             } catch {
-                if !Task.isCancelled, let self, self.isCurrent(client) {
+                if !Task.isCancelled, let self, self.isCurrent(desktop) {
                     self.reportCaptureError(error, event: event)
                 }
             }
@@ -291,7 +302,7 @@ final class SpotifyIntegration {
 
     private func writeNextTrack() {
         guard writeTask == nil, !pendingTracks.isEmpty, autosave, playlistURL != nil,
-              let connection, let playlistID = playlistPreferences[connection.accountID]?["id"] else { return }
+              let desktop, let accountID, let playlistID = playlistPreferences[accountID]?["id"] else { return }
         let track = pendingTracks.removeFirst()
         writingTrack = track
         writeTask = Task { [weak self] in
@@ -302,25 +313,25 @@ final class SpotifyIntegration {
                 self.writeNextTrack()
             }
             do {
-                let result = try await connection.client.save(trackURI: track.uri, playlistID: playlistID)
+                let result = try await desktop.save(trackURI: track.uri, playlistID: playlistID)
                 try Task.checkCancellation()
-                guard self.isCurrent(connection.client) else { return }
+                guard self.isCurrent(desktop) else { return }
                 let message = result == .saved ? "Saved to playlist" : "Already in playlist"
                 self.publishBopResult(message, event: self.writingTrack?.event ?? track.event)
-            } catch SpotifyPlayerConnection.Failure.playlistMissing {
-                if !Task.isCancelled, self.isCurrent(connection.client) {
-                    self.forgetMissingPlaylist(accountID: connection.accountID, id: playlistID)
+            } catch SpotifyDesktop.Failure.playlistMissing {
+                if !Task.isCancelled, self.isCurrent(desktop) {
+                    self.forgetMissingPlaylist(accountID: accountID, id: playlistID)
                 }
             } catch {
-                if !Task.isCancelled, self.isCurrent(connection.client) {
+                if !Task.isCancelled, self.isCurrent(desktop) {
                     self.reportCaptureError(error, event: self.writingTrack?.event ?? track.event)
                 }
             }
         }
     }
 
-    private func isCurrent(_ client: SpotifyPlayerConnection) -> Bool {
-        autosave && playlistURL != nil && connection?.client === client
+    private func isCurrent(_ desktop: SpotifyDesktop) -> Bool {
+        autosave && playlistURL != nil && self.desktop === desktop
     }
 
     private var playlistPreferences: [String: [String: String]] {
@@ -328,25 +339,25 @@ final class SpotifyIntegration {
         set { defaults.set(newValue, forKey: Self.playlistsKey) }
     }
 
-    private func preparePlaylist(using client: SpotifyPlayerConnection, accountID: String) async throws -> (String, URL) {
+    private func preparePlaylist(using desktop: SpotifyDesktop, accountID: String) async throws -> (String, URL) {
         try Task.checkCancellation()
-        if let id = playlistPreferences[accountID]?["id"], let url = SpotifyPlayerConnection.playlistURL(for: id) {
+        if let id = playlistPreferences[accountID]?["id"], let url = SpotifyDesktop.playlistURL(for: id) {
             do {
-                try await client.validatePlaylist(id)
+                try await desktop.validatePlaylist(id)
                 return (id, url)
-            } catch SpotifyPlayerConnection.Failure.playlistMissing {
+            } catch SpotifyDesktop.Failure.playlistMissing {
                 try Task.checkCancellation()
                 playlistPreferences.removeValue(forKey: accountID)
             }
         }
-        let id = try await client.createPlaylist()
+        let id = try await desktop.createPlaylist()
         try Task.checkCancellation()
-        guard let url = SpotifyPlayerConnection.playlistURL(for: id) else {
-            throw SpotifyPlayerConnection.Failure.playlistUnavailable
+        guard let url = SpotifyDesktop.playlistURL(for: id) else {
+            throw SpotifyDesktop.Failure.playlistUnavailable
         }
         // Keep the ID if verification is interrupted, so retrying can check the same playlist.
         playlistPreferences[accountID] = ["id": id]
-        try await client.validatePlaylist(id)
+        try await desktop.validatePlaylist(id)
         return (id, url)
     }
 
@@ -376,11 +387,7 @@ final class SpotifyIntegration {
     }
 
     private func reportCaptureError(_ error: any Error, event: Int) {
-        if let failure = error as? SpotifyPlayerConnection.Failure,
-           failure == .reauthorizationRequired {
-            disconnect(captureError: error.localizedDescription)
-        } else {
-            publishBopResult(error.localizedDescription, event: event)
-        }
+        _ = noteUnreachable(error)
+        publishBopResult(error.localizedDescription, event: event)
     }
 }

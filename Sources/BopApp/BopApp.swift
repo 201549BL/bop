@@ -86,7 +86,6 @@ final class BopAppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             }
             setupWindow = nil
         } else if window === settingsWindow {
-            spotify.cancelSignIn()
             settingsWindow = nil
         } else if window === graphsWindow {
             graphsWindow = nil
@@ -380,7 +379,7 @@ private final class BopMenuBar: NSObject, NSPopoverDelegate {
             listeningSymbol: symbol,
             tracks: spotify.recentBops,
             lastResult: lastBopDetail.map { $0 == Self.bopDetected ? $0 : "Last bop · \($0)" },
-            providerConnected: spotify.isConnected,
+            providerConnected: spotify.isEnabled,
             autosaveEnabled: hasAutosave,
             playlistAvailable: hasPlaylist,
             isExpanded: showsRecentBops,

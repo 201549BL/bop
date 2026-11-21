@@ -19,14 +19,6 @@ targets:
         buildPhase: resources
       - path: LICENSE
         buildPhase: resources
-    postBuildScripts:
-      - name: Embed Spotify Player Helper
-        script: '/bin/bash "$SRCROOT/Tools/SpotifyPlayer/embed.sh"'
-        # Xcode must re-sign the app when the script adds or removes these files.
-        outputFiles:
-          - $(TARGET_BUILD_DIR)/$(CONTENTS_FOLDER_PATH)/Helpers/spotify_player
-          - $(TARGET_BUILD_DIR)/$(UNLOCALIZED_RESOURCES_FOLDER_PATH)/SpotifyPlayer-LICENSE.txt
-        basedOnDependencyAnalysis: false
     dependencies:
       - package: BopCore
         product: BopCore
